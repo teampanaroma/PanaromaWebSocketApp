@@ -1,0 +1,75 @@
+<Window x:Class="Panaroma.Communication.Application.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Closing="Main_Closing" x:Name="Main" Height="329.238"
+        Width="519.069" Icon="images/websocket.png">
+    <Grid Name="GridMain">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="242*" />
+            <ColumnDefinition Width="269*" />
+        </Grid.ColumnDefinitions>
+        <DockPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Menu Background="Transparent">
+                <MenuItem Header="Ayarlar" FontFamily="Century Gothic">
+                    <MenuItem Click="MenuItem_OnClick" FontFamily="Century Gothic" Header="Kasa Numarası" />
+                    <MenuItem Click="Bildirim_OnClick" FontFamily="Century Gothic" Header="Bildirim Suresi" />
+                    <MenuItem Click="ComChange_OnClick" FontFamily="Century Gothic" Header="COM Port"/>
+                    <MenuItem Click="ConnectionType_OnClick" FontFamily="Century Gothic" Header="Bağlantı Tipi Değiştir"/>
+                    <MenuItem Click="Ip_OnClick" FontFamily="Century Gothic" Header="Ip Bilgisini Değiştir"/>
+                    <MenuItem Click="RemoveOldLog_OnClick" FontFamily="Century Gothic" Header="Eski Log Dosyaları Silme Süresi"/>
+                    <MenuItem Click="AppConfig_OnClick" FontFamily="Century Gothic" Header="Uygulama Ayarları"/>
+                </MenuItem>
+            </Menu>
+            <Menu Background="Transparent">
+                <MenuItem Header="Uygulama" FontFamily="Century Gothic">
+                    <MenuItem Click="Restart_OnClick" FontFamily="Century Gothic" Header="Yeniden Başlat" ToolTip="Programı yeniden başlatır." />
+                    <MenuItem Click="Exit_OnClick" FontFamily="Century Gothic" Header="Çıkış" ToolTip="Programdan çıkmak için kullanılır." />
+                    <MenuItem Click="About_OnClick" FontFamily="Century Gothic" Header="Hakkında" />
+                    <MenuItem  FontFamily="Century Gothic" Header="ClipBoard" Click="ClipBoard_Click" />
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+        <Grid Name="GridMenu" Margin="192,15,188,0" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="133">
+            <StackPanel Name="StackPanelSuccess" Margin="0,5,0,0" Orientation="Vertical" HorizontalAlignment="Left"
+                  VerticalAlignment="Top">
+                <TextBlock MouseEnter="TetxtBlockSuccess_OnMouseEnter" MouseLeave="TetxtBlockSuccess_OnMouseLeave"
+                   PreviewMouseDown="TetxtBlockSuccess_OnPreviewMouseDown" Name="TetxtBlockSuccess" Cursor="Hand"
+                   FontSize="13" Text="Başarılı" FontFamily="Century Gothic" Width="46" TextAlignment="Right" />
+                <StackPanel Name="StackPanelSuccessLine" Height="5" Margin="0,2,0,0" />
+            </StackPanel>
+            <StackPanel Name="StackPanelError" Margin="50,5,0,0" Orientation="Vertical" HorizontalAlignment="Left"
+                  VerticalAlignment="Top">
+                <TextBlock MouseEnter="TextBlockError_OnMouseEnter" MouseLeave="TextBlockError_OnMouseLeave"
+                   PreviewMouseDown="TextBlockError_OnPreviewMouseDown" Name="TextBlockError" Cursor="Hand"
+                   FontSize="13" Text="Hatalı" FontFamily="Century Gothic" />
+                <StackPanel Name="StackPanelErrorLine" Height="5" Margin="0,2,0,0" />
+            </StackPanel>
+            <StackPanel Name="StackPanelWarning" Margin="95,5,0,0" Orientation="Vertical" HorizontalAlignment="Left"
+                  VerticalAlignment="Top" Width="33">
+                <TextBlock MouseEnter="TextBlockWarning_OnMouseEnter" MouseLeave="TextBlockWarning_OnMouseLeave"
+                   PreviewMouseDown="TextBlockWarning_OnPreviewMouseDown" Name="TextBlockWarning" Cursor="Hand"
+                   FontSize="13" Text="Uyarı" FontFamily="Century Gothic" />
+                <StackPanel Name="StackPanelWarningLine" Height="5" Margin="0,2,0,0" />
+            </StackPanel>
+        </Grid>
+        <Grid Name="GridDataGridviewContent" Margin="0,43,0,0" Grid.ColumnSpan="2" />
+        <StatusBar HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="513" Margin="0,270,0,0" Grid.ColumnSpan="2">
+            <StatusBarItem x:Name="lblVersionInfo" FontFamily="Century Gothic" Content="StatusBarItem" Height="40" VerticalAlignment="Top" Margin="0,-11,0,0" />
+        </StatusBar>
+        <PasswordBox x:Name="_passworBox" HorizontalAlignment="Left"
+                     Margin="10,84,0,0"
+                     VerticalAlignment="Top"
+                     Width="100" KeyDown="PasswordBoxOnKeyDownHandler" />
+        <Label x:Name="_label" Content="" FontFamily="Century Gothic" HorizontalAlignment="Left" Margin="10,53,0,0" VerticalAlignment="Top" Width="245" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="_textBox" FontFamily="Century Gothic" HorizontalAlignment="Left" KeyDown="NotificationOnKeyDownHandler" Height="18" Margin="10,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="100"/>
+        <Label x:Name="_labelConfig" Content="Uygulama Ayarları" FontFamily="Century Gothic" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.789,1.346" Margin="191,43,0,0" Grid.ColumnSpan="2" Width="219"/>
+        <TextBox x:Name="_comChange" FontFamily="Century Gothic" HorizontalAlignment="Left" KeyDown="ComChangeOnKeyDownHandler" Height="18" Margin="10,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="100"/>
+        <TextBox x:Name="_connectionType" FontFamily="Century Gothic" HorizontalAlignment="Left" KeyDown="ConnectionTypeOnKeyDownHandler" Height="18" Margin="10,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="100"/>
+        <TextBox x:Name="_ipChange" FontFamily="Century Gothic" HorizontalAlignment="Left" KeyDown="IpChangeOnKeyDownHandler" Height="18" Margin="10,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="100"/>
+        <TextBox x:Name="_logChange" FontFamily="Century Gothic" HorizontalAlignment="Left" KeyDown="LogChangeOnKeyDownHandler" Height="18" Margin="10,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="100"/>
+        <ListBox x:Name="listBox" FontFamily="Century Gothic" HorizontalAlignment="Left"  KeyDown="AppConfigOnKeyDownHandler" Height="195" Margin="191,70,0,0" VerticalAlignment="Top" Width="299" Grid.ColumnSpan="2" FontSize="10">
+        </ListBox>
+    </Grid>
+</Window>

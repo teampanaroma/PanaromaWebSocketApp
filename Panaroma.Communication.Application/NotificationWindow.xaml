@@ -1,0 +1,62 @@
+<Window x:Class="Panaroma.Communication.Application.NotificationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Panaroma.Communication.Application"
+        x:Name="Notification" Title="NotificationWindow" AllowsTransparency="true" Height="98.518"
+        Width="294.915" WindowStartupLocation="Manual" WindowStyle="None" ResizeMode="CanResizeWithGrip">
+    <Control.Background>
+        <SolidColorBrush Opacity="1.0" Color="White" />
+    </Control.Background>
+    <FrameworkElement.Resources>
+        <ControlTemplate x:Key="CloseButtonTemplate" TargetType="{x:Type Button}">
+            <Grid>
+                <Ellipse x:Name="theEllipse" Fill="#FFFBF0B8" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="UIElement.IsMouseOver" Value="true">
+                    <Setter TargetName="theEllipse" Property="Shape.Fill" Value="Red" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </FrameworkElement.Resources>
+    <Grid>
+        <DockPanel MouseDown="MainDockPanel_OnMouseDown" MouseMove="MainDockPanel_OnMouseMove"
+               MouseLeave="MainDockPanel_OnMouseLeave" Name="MainDockPanel" AllowDrop="true">
+            <DockPanel Name="CloseButtonDockPanel" Background="Transparent" Dock="Right" Margin="5,5,5,0" Height="15"
+                 VerticalAlignment="Top">
+                <Button Click="closeButton_Click" Name="closeButton" Height="15" Width="15" HorizontalAlignment="Right"
+                BorderBrush="Transparent" Template="{DynamicResource CloseButtonTemplate}" Cursor="Hand" ToolTip="Kapat" />
+            </DockPanel>
+            <DockPanel Name="HeaderDockPanel" Background="Transparent" Dock="Top" Height="30" Width="Auto"
+                 VerticalAlignment="Stretch">
+                <TextBlock Name="HeaderTextBlock" Background="Transparent" HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom" Margin="5,0,0,0" FontFamily="Century Gothic" FontWeight="Bold" />
+                <TextBlock Name="TimeTextBlock" Background="Transparent" VerticalAlignment="Bottom" Margin="0,0,5,0"
+                   HorizontalAlignment="Right" FontFamily="Century Gothic" />
+            </DockPanel>
+            <DockPanel Name="LeftDockPanel" Background="Transparent" VerticalAlignment="Center" Margin="5,0,0,0"
+                 Height="50" Width="50">
+                <Image Name="NotificationImage" Width="Auto" Height="Auto" Stretch="Fill" />
+            </DockPanel>
+            <DockPanel Name="DescriptionDockPanel" Background="Transparent" Height="Auto" VerticalAlignment="Center"
+                 Margin="10,0,-10,0">
+                <TextBlock Name="DescriptionTextBlock" Background="Transparent" HorizontalAlignment="Left"
+                   VerticalAlignment="Stretch" TextAlignment="Justify" TextWrapping="Wrap" FontFamily="Century Gothic" />
+            </DockPanel>
+        </DockPanel>
+    </Grid>
+    <FrameworkElement.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <EventTrigger.Actions>
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation x:Name="doubleAnimation" Duration="0:0:0.1" AutoReverse="true" RepeatBehavior="3x"
+                             FillBehavior="HoldEnd" BeginTime="00:00:00" Storyboard.TargetProperty="(Window.Left)" By="-100" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger.Actions>
+        </EventTrigger>
+    </FrameworkElement.Triggers>
+</Window>

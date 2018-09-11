@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B59B6604-E330-4AB7-9176-630FA2B0674E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Panaroma.OKC.Integration.Library</RootNamespace>
+    <AssemblyName>Panaroma.OKC.Integration.Library</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PCPOSOKC">
+      <HintPath>C:\Users\User\Downloads\DLL&amp;SOURCE_V0222 - Copy\DLL&amp;SOURCE_V0222\PCPOSECR_0222\PCPOSOKC.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyLoader.cs" />
+    <Compile Include="Bank.cs" />
+    <Compile Include="BankResponse.cs" />
+    <Compile Include="ByteExtensions.cs" />
+    <Compile Include="Cashier.cs" />
+    <Compile Include="COMConfiguration.cs" />
+    <Compile Include="COMPortConnectionException.cs" />
+    <Compile Include="ConnectionType.cs" />
+    <Compile Include="Department.cs" />
+    <Compile Include="DoTransactionResponse.cs" />
+    <Compile Include="EcrConfig.cs" />
+    <Compile Include="EcrModeType.cs" />
+    <Compile Include="EthernetConfiguration.cs" />
+    <Compile Include="EthernetConnectionException.cs" />
+    <Compile Include="FreeText.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="HybridMembers.cs" />
+    <Compile Include="IConfiguration.cs" />
+    <Compile Include="InformationMessages.cs" />
+    <Compile Include="InformationMessageType.cs" />
+    <Compile Include="IOKC.cs" />
+    <Compile Include="OKC.cs" />
+    <Compile Include="OKCConfiguration.cs" />
+    <Compile Include="OKCConfigurationFactory.cs" />
+    <Compile Include="OKCStatus.cs" />
+    <Compile Include="PCPOSOKCException.cs" />
+    <Compile Include="ProcessInformation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReceiptBeginResponse.cs" />
+    <Compile Include="ReceiptInquiryResponse.cs" />
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="Unit.cs" />
+    <Compile Include="VATGroup.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

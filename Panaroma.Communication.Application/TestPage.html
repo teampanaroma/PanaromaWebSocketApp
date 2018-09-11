@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Web Socket Test Page</title>
+</head>
+<body>
+    <script type="text/javascript">
+
+		var wsUrl = "ws://localhost:8080/Websocket/ws";
+		var webSocket;
+
+		function init() {
+			webSocket = new WebSocket(wsUrl);
+			webSocket.onopen = function(evt) {
+				onOpen(event)
+			};
+			webSocket.onclose = function(evt) {
+				onClose(event)
+			};
+			webSocket.onmessage = function(evt) {
+				onMessage(event)
+			};
+			webSocket.onerror = function(evt) {
+				onError(event)
+			};
+		}
+
+		function onOpen(event){
+			Console.log("OnOpen Event");
+		}
+
+		function onClose(event) {
+			Console.log("OnClose Event");
+		}
+
+		function onError(event) {
+			Console.log("OnError Event");
+		}
+
+		function sendMessage() {
+			webSocket.send(textBox.value);
+		}
+
+		function onMessage(event) {
+			alert(event.data);
+		}
+
+		window.addEventListener("load", init, false);
+    </script>
+    <textarea id="textBox" rows="5" cols="20"></textarea>
+    <button onclick="sendMessage();">Send Message</button>
+
+
+</body>
+</html>
