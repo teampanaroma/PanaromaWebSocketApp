@@ -40,6 +40,7 @@ namespace Panaroma.Communication.Application
         private string okcres = "#okcres#";
         private string msgNotReady = "Henüz hazır değil";
         private string msgConOpen = "Bağlantı açık";
+        private string t=null;
 
         public MainWindow()
         {
@@ -71,7 +72,7 @@ namespace Panaroma.Communication.Application
         private void MainWindowProperty()
         {
             ShowInTaskbar = true;
-            //lblVersionInfo.Content = Clipboard.GetText();
+            lblVersionInfo.Content = Clipboard.GetText();
             lblVersionInfo.Content = "Version: " + getRunningVersion().Major + "." + getRunningVersion().MajorRevision +
                                      "." + getRunningVersion().Build + "." + " Release_180815-56";
             Title = "                                                   MX-915 İletişim Ekranı";
@@ -107,15 +108,15 @@ namespace Panaroma.Communication.Application
             timer2.Interval = 80;
             timer2.Tick += new EventHandler(timer2_Tick);
 
-            ////şimdilik test timer
+            //şimdilik test timer
             //timer3.Enabled = true;
-            //timer3.Interval=100;
+            //timer3.Interval = 100;
             //timer3.Tick += new EventHandler(timer3_Tick);
         }
 
         private void timer3_Tick(object sender, EventArgs e)
         {
-            string t = Clipboard.GetText();
+            t = Clipboard.GetText();
             lblVersionInfo.Content = t;
         }
 
@@ -206,6 +207,7 @@ namespace Panaroma.Communication.Application
             GridMenu.Visibility = Visibility.Visible;
             listBox.SelectionMode = SelectionMode.Extended;
             _logChange.Visibility = Visibility.Hidden;
+            WebBrowser1.Visibility=Visibility.Hidden;
         }
 
         private void MainWindow_Loaded_Task(Task b)
@@ -1046,6 +1048,7 @@ namespace Panaroma.Communication.Application
                 return msgNotReady;
             try
             {
+                
                 return webBrowser.Document.GetElementById("status").InnerText;
             }
             catch (Exception ex)
@@ -1108,7 +1111,7 @@ namespace Panaroma.Communication.Application
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            string t = Clipboard.GetText();
+            t = Clipboard.GetText();
             if (String.IsNullOrWhiteSpace(t))
                 return;
 

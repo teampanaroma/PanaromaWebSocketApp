@@ -71,5 +71,6 @@
         <TextBox x:Name="_logChange" FontFamily="Century Gothic" HorizontalAlignment="Left" KeyDown="LogChangeOnKeyDownHandler" Height="18" Margin="10,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="100"/>
         <ListBox x:Name="listBox" FontFamily="Century Gothic" HorizontalAlignment="Left"  KeyDown="AppConfigOnKeyDownHandler" Height="195" Margin="191,70,0,0" VerticalAlignment="Top" Width="299" Grid.ColumnSpan="2" FontSize="10">
         </ListBox>
+        <WebBrowser x:Name="WebBrowser1" HorizontalAlignment="Left" Height="100" Margin="160,-15,0,0" VerticalAlignment="Top" Width="100"/>
     </Grid>
 </Window>
