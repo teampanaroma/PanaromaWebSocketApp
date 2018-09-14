@@ -66,6 +66,7 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -75,9 +76,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BrowserEmulationVersion.cs" />
     <Compile Include="FileWorker.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="InternalCommunication.cs" />
+    <Compile Include="InternetExplorerBrowserEmulation.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>mainwindow.xaml</DependentUpon>

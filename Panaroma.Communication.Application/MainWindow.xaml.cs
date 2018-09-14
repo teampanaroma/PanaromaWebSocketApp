@@ -45,6 +45,10 @@ namespace Panaroma.Communication.Application
         public MainWindow()
         {
             InitializeComponent();
+            //setIE();
+            //webBrowser.DocumentCompleted += WebBrowser1_DocumentCompleted;
+            //string curDir = Directory.GetCurrentDirectory();
+            //webBrowser.Url= new Uri(String.Format("file:///{0}/OKC.html", curDir));
             MainWindowProperty();
             VisibilityDefaultStatus();
             System.Windows.Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -54,25 +58,10 @@ namespace Panaroma.Communication.Application
             Loaded += new RoutedEventHandler(MainWindow_Loaded);
         }
 
-        private void ClipBoardSettings()
-        {
-            timerDefaultValues();
-            setIE();
-            webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            webBrowser.Location = new System.Drawing.Point(0, 0);
-            webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            webBrowser.Size = new System.Drawing.Size(800, 450);
-            webBrowser.TabIndex = 0;
-            webBrowser.Visible = true;
-            webBrowser.DocumentCompleted += WebBrowser1_DocumentCompleted;
-            string curDir = Directory.GetCurrentDirectory();
-            webBrowser.Url = new Uri(String.Format("file:///{0}/OKC.html", curDir));
-        }
-
         private void MainWindowProperty()
         {
             ShowInTaskbar = true;
-            lblVersionInfo.Content = Clipboard.GetText();
+            //lblVersionInfo.Content = Clipboard.GetText();
             lblVersionInfo.Content = "Version: " + getRunningVersion().Major + "." + getRunningVersion().MajorRevision +
                                      "." + getRunningVersion().Build + "." + " Release_180815-56";
             Title = "                                                   MX-915 İletişim Ekranı";
@@ -1147,12 +1136,13 @@ namespace Panaroma.Communication.Application
             using (Microsoft.Win32.RegistryKey Key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION", Microsoft.Win32.RegistryKeyPermissionCheck.ReadWriteSubTree))
                 if (Key.GetValue(Process.GetCurrentProcess().ProcessName + ".exe") == null)
                     Key.SetValue(Process.GetCurrentProcess().ProcessName + ".exe", RegVal, Microsoft.Win32.RegistryValueKind.DWord);
+                                    //timerDefaultValues();
             return true;
+
         }
 
         private void ClipBoard_Click(object sender, RoutedEventArgs e)
         {
-            ClipBoardSettings();
         }
     }
 }

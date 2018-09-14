@@ -31,7 +31,7 @@ namespace Panaroma.Communication.Application
 
         public void SendMessage(string message)
         {
-            IWebSocketConnection webSocketConnection = this._webSocketConnections.LastOrDefault();
+            IWebSocketConnection webSocketConnection = _webSocketConnections.LastOrDefault();
             if (webSocketConnection == null)
             {
                 return;
