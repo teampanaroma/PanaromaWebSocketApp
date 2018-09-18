@@ -40,22 +40,52 @@ namespace Panaroma.Communication.Application
         private string okcres = "#okcres#";
         private string msgNotReady = "Henüz hazır değil";
         private string msgConOpen = "Bağlantı açık";
-        private string t=null;
 
         public MainWindow()
         {
-            InitializeComponent();
-            //setIE();
-            //webBrowser.DocumentCompleted += WebBrowser1_DocumentCompleted;
-            //string curDir = Directory.GetCurrentDirectory();
-            //webBrowser.Url= new Uri(String.Format("file:///{0}/OKC.html", curDir));
-            MainWindowProperty();
-            VisibilityDefaultStatus();
-            System.Windows.Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
-            _dataGridWarning = GetDefaultDataGrid(DataGridType.Warning);
-            _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
-            _dataGridError = GetDefaultDataGrid(DataGridType.Error);
-            Loaded += new RoutedEventHandler(MainWindow_Loaded);
+            if (ConfigurationSettings.AppSettings["ProcessType"] == "1")
+            {
+                Title = "                                                   MX-915 İletişim Ekranı" + " - " + "WebSocket";
+                InitializeComponent();
+                MainWindowProperty();
+                VisibilityDefaultStatus();
+                System.Windows.Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+                _dataGridWarning = GetDefaultDataGrid(DataGridType.Warning);
+                _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
+                _dataGridError = GetDefaultDataGrid(DataGridType.Error);
+                Loaded += new RoutedEventHandler(MainWindow_Loaded);
+            }
+            else if (ConfigurationSettings.AppSettings["ProcessType"] == "2")
+            {
+                Title = "                                                   MX-915 İletişim Ekranı" + " - " + "ClipBoard";
+                InitializeComponent();
+                //InternetExplorerBrowserEmulation.SetBrowserEmulationVersion();
+                //webBrowser.DocumentCompleted += WebBrowser1_DocumentCompleted;
+                //string curDir = Directory.GetCurrentDirectory();
+                //webBrowser.Url = new Uri(String.Format("file:///{0}/OKC.html", curDir));
+                MainWindowProperty();
+                VisibilityDefaultStatus();
+                System.Windows.Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+                _dataGridWarning = GetDefaultDataGrid(DataGridType.Warning);
+                _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
+                _dataGridError = GetDefaultDataGrid(DataGridType.Error);
+                timerDefaultValues();
+            }
+            else
+            {
+                Title = "                                                   MX-915 İletişim Ekranı" + " - " + "None";
+                InitializeComponent();
+                MainWindowProperty();
+                VisibilityDefaultStatus();
+                System.Windows.Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+                _dataGridWarning = GetDefaultDataGrid(DataGridType.Warning);
+                _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
+                _dataGridError = GetDefaultDataGrid(DataGridType.Error);
+                Dispatcher.BeginInvoke(
+                    new Action(() => (new NotificationWindow(NotificationType.Information, "Uyarı ",
+                            "Program şu anda hiç bir şekilde etkileşimde değil  !!!", Helpers.DateTimeHelper.GetDateTime()))
+                        .Build().Show()), Array.Empty<object>());
+            }
         }
 
         private void MainWindowProperty()
@@ -64,10 +94,9 @@ namespace Panaroma.Communication.Application
             //lblVersionInfo.Content = Clipboard.GetText();
             lblVersionInfo.Content = "Version: " + getRunningVersion().Major + "." + getRunningVersion().MajorRevision +
                                      "." + getRunningVersion().Build + "." + " Release_180815-56";
-            Title = "                                                   MX-915 İletişim Ekranı";
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            ToolTip = "Bu Program WebSocket teknolojisi kullanır. Yalnızca Json Formatı ile habeleşme kurar.";
+            ToolTip = "Bu Program WebSocket teknolojisi veya ClipBoard ile haberleşme yapar. Yalnızca Json Formatı ile habeleşme kurar.";
         }
 
         private void NotifyIconSetings()
@@ -87,26 +116,20 @@ namespace Panaroma.Communication.Application
 
         private void timerDefaultValues()
         {
-            //timer1 yönetir
-            timer1.Enabled = true;
-            timer1.Interval = 100;
-            timer1.Tick += new EventHandler(timer1_Tick);
+            ////timer1 yönetir
+            //timer1.Enabled = true;
+            //timer1.Interval = 100;
+            //timer1.Tick += new EventHandler(timer1_Tick);
 
-            //timer2 yönetir
-            timer2.Enabled = false;
-            timer2.Interval = 80;
-            timer2.Tick += new EventHandler(timer2_Tick);
+            ////timer2 yönetir
+            //timer2.Enabled = false;
+            //timer2.Interval = 80;
+            //timer2.Tick += new EventHandler(timer2_Tick);
 
             //şimdilik test timer
-            //timer3.Enabled = true;
-            //timer3.Interval = 100;
-            //timer3.Tick += new EventHandler(timer3_Tick);
-        }
-
-        private void timer3_Tick(object sender, EventArgs e)
-        {
-            t = Clipboard.GetText();
-            lblVersionInfo.Content = t;
+            timer3.Enabled = true;
+            timer3.Interval = 100;
+            timer3.Tick += new EventHandler(timer3_Tick);
         }
 
         private void notifyIcon_DoubleClick(object Sender, System.EventArgs e)
@@ -196,7 +219,6 @@ namespace Panaroma.Communication.Application
             GridMenu.Visibility = Visibility.Visible;
             listBox.SelectionMode = SelectionMode.Extended;
             _logChange.Visibility = Visibility.Hidden;
-            WebBrowser1.Visibility=Visibility.Hidden;
         }
 
         private void MainWindow_Loaded_Task(Task b)
@@ -296,6 +318,46 @@ namespace Panaroma.Communication.Application
             if (!_isWarningMouseDown)
             {
                 StackPanelWarningLine.Background = Brushes.Transparent;
+            }
+        }
+
+        private string eskiDeger = null;
+
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            string t = Clipboard.GetText();
+            if (String.IsNullOrWhiteSpace(t))
+                return;
+            if (t == eskiDeger)
+                return;
+            eskiDeger = t;
+            if (t == okccmd)
+                return;
+            if (t.IndexOf(okccmd) == -1)
+                return;
+            t = t.Substring(okccmd.Length);
+            try
+            {
+                try
+                {
+                    (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
+                    string str =
+                        PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
+                            .GetInternalCommunication());
+                    setClipboard(str);
+                    if (InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
+                    {
+                        AddLogToGrid(str);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    _catch(exception);
+                }
+            }
+            finally
+            {
+                _finally();
             }
         }
 
@@ -1037,7 +1099,6 @@ namespace Panaroma.Communication.Application
                 return msgNotReady;
             try
             {
-                
                 return webBrowser.Document.GetElementById("status").InnerText;
             }
             catch (Exception ex)
@@ -1100,7 +1161,7 @@ namespace Panaroma.Communication.Application
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            t = Clipboard.GetText();
+            string t = Clipboard.GetText();
             if (String.IsNullOrWhiteSpace(t))
                 return;
 
@@ -1117,32 +1178,6 @@ namespace Panaroma.Communication.Application
                 setClipboard(okcres + getStatus());
             else
                 sendCmd(t);
-        }
-
-        private bool setIE()
-        {
-            int BrowserVer, RegVal;
-            BrowserVer = new System.Windows.Forms.WebBrowser().Version.Major;
-            if (BrowserVer >= 11)
-                RegVal = 111000;
-            else if (BrowserVer == 10)
-                RegVal = 10001;
-            else if (BrowserVer == 9)
-                RegVal = 9999;
-            else if (BrowserVer == 8)
-                RegVal = 8888;
-            else
-                RegVal = 7000;
-            using (Microsoft.Win32.RegistryKey Key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION", Microsoft.Win32.RegistryKeyPermissionCheck.ReadWriteSubTree))
-                if (Key.GetValue(Process.GetCurrentProcess().ProcessName + ".exe") == null)
-                    Key.SetValue(Process.GetCurrentProcess().ProcessName + ".exe", RegVal, Microsoft.Win32.RegistryValueKind.DWord);
-                                    //timerDefaultValues();
-            return true;
-
-        }
-
-        private void ClipBoard_Click(object sender, RoutedEventArgs e)
-        {
         }
     }
 }

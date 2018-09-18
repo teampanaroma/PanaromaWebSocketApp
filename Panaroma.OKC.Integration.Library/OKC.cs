@@ -258,7 +258,7 @@ namespace Panaroma.OKC.Integration.Library
                 reqMembers.groupDF6F.Kcv = _ecrInterface.GMP3Pair.getKCV().ToHexString();
                 reqMembers.groupDF6F.status = "00000000";
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GMP3Echo, reqMembers, ref _result);
-                SetApplicationResult(-100, (object) null);
+                SetApplicationResult(-100, (object)null);
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -288,7 +288,7 @@ namespace Panaroma.OKC.Integration.Library
                     return this;
                 }
 
-                if (((OKCStatus) okcStatus.ProcessInformation.InformationMessages.Message).ReceiptIsOpen)
+                if (((OKCStatus)okcStatus.ProcessInformation.InformationMessages.Message).ReceiptIsOpen)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "Açıkta zaten bir fiş var.");
@@ -505,7 +505,7 @@ namespace Panaroma.OKC.Integration.Library
                 MethodInit(requestMembers, "TryDoTransaction");
                 if (!CheckOkcConnection())
                     return this;
-                if (!((OKCStatus) TryGetOKCStatus().ProcessInformation.InformationMessages.Message).ReceiptIsOpen)
+                if (!((OKCStatus)TryGetOKCStatus().ProcessInformation.InformationMessages.Message).ReceiptIsOpen)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "Açıkta fiş yok. Öncelikle yeni bir fiş açın.");
@@ -581,7 +581,7 @@ namespace Panaroma.OKC.Integration.Library
                 if (!CheckOkcConnection())
                     return this;
                 if (requestMembers.BatchTranItems == null ||
-                    !((IEnumerable<BatchTranItem>) requestMembers.BatchTranItems).Any())
+                    !((IEnumerable<BatchTranItem>)requestMembers.BatchTranItems).Any())
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("{0} boş olamaz.", "BatchTranItems"));
@@ -1282,7 +1282,7 @@ namespace Panaroma.OKC.Integration.Library
                 MethodInit(Request, "TrySetDepartmentList");
                 if (!CheckOkcConnection())
                     return this;
-                if (departments == null || !((IEnumerable<Department>) departments).Any() || departments.Length > 8)
+                if (departments == null || !((IEnumerable<Department>)departments).Any() || departments.Length > 8)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "TrySetDepartmentList işlemi için Departman boş olamaz || Departman sayısı 8 den büyük olamaz.");
@@ -1295,7 +1295,7 @@ namespace Panaroma.OKC.Integration.Library
                     {
                         Amount = department.Amount,
                         DepLimitAmount = department.LimitAmount,
-                        VatGroup = ((byte) department.VatGroup).ToString().PadLeft(2, '0'),
+                        VatGroup = ((byte)department.VatGroup).ToString().PadLeft(2, '0'),
                         ItemName = department.DepartmentName,
                         DepartmentId = department.Id
                     };
@@ -1707,7 +1707,7 @@ namespace Panaroma.OKC.Integration.Library
                 if (endPLUNo > 100000)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
-                        string.Format("GetPLUList işleminde {0} 100.000 den büyük olamaz.", (object) "EndPLUNo"));
+                        string.Format("GetPLUList işleminde {0} 100.000 den büyük olamaz.", (object)"EndPLUNo"));
                     return this;
                 }
 
@@ -1743,7 +1743,7 @@ namespace Panaroma.OKC.Integration.Library
                 };
                 Helpers.MembersHelper.SetDefaultPadLeft(ref members);
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_PrintReport, members, ref _result);
-                SetApplicationResult(-100, (object) _result.SoftCopyOfReport);
+                SetApplicationResult(-100, (object)_result.SoftCopyOfReport);
             }
             catch (Exception ex)
             {
