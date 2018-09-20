@@ -44,7 +44,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public OKC(EthernetConfiguration ethernetConfiguration)
         {
-            if (string.IsNullOrEmpty(ethernetConfiguration?.IpAddress) ||
+            if(string.IsNullOrEmpty(ethernetConfiguration?.IpAddress) ||
                 string.IsNullOrWhiteSpace(ethernetConfiguration.IpAddress) || ethernetConfiguration.Port < 0)
             {
                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
@@ -60,7 +60,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public OKC(string ipAddress, int port)
         {
-            if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrWhiteSpace(ipAddress) || port < 0)
+            if(string.IsNullOrEmpty(ipAddress) || string.IsNullOrWhiteSpace(ipAddress) || port < 0)
             {
                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                     "Ethernet ile bağlantıda IpAddress veya Port alanı boş alamaz.");
@@ -75,7 +75,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public OKC(COMConfiguration comConfiguration)
         {
-            if (string.IsNullOrEmpty(comConfiguration?.PortName) ||
+            if(string.IsNullOrEmpty(comConfiguration?.PortName) ||
                 string.IsNullOrWhiteSpace(comConfiguration.PortName))
             {
                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
@@ -91,7 +91,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public OKC(string comPortName)
         {
-            if (string.IsNullOrEmpty(comPortName) || string.IsNullOrWhiteSpace(comPortName))
+            if(string.IsNullOrEmpty(comPortName) || string.IsNullOrWhiteSpace(comPortName))
             {
                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                     "Com port ile bağlantıda port adresi boş alamaz.");
@@ -110,12 +110,12 @@ namespace Panaroma.OKC.Integration.Library
             {
                 MethodInit(Request, "TryPing");
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_Ping, new Members(), ref _result);
-                if (int.Parse(_result.InternalErrNum).Equals(0))
+                if(int.Parse(_result.InternalErrNum).Equals(0))
                     return this;
                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                     "Cihaz bilgisi alınamadı. İnternet bağlantısını kontrol ediniz.");
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -136,7 +136,7 @@ namespace Panaroma.OKC.Integration.Library
                 _result.InternalErrNum = resultId.ToString();
                 SetApplicationResult(resultId, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -158,7 +158,7 @@ namespace Panaroma.OKC.Integration.Library
                 _result.InternalErrNum = resultId.ToString();
                 SetApplicationResult(resultId, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -186,23 +186,23 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryCashierLogin");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _cashier = cashier;
-                if (string.IsNullOrEmpty(cashier?.Id) || string.IsNullOrWhiteSpace(cashier.Id) ||
+                if(string.IsNullOrEmpty(cashier?.Id) || string.IsNullOrWhiteSpace(cashier.Id) ||
                     (string.IsNullOrEmpty(cashier.Password) || string.IsNullOrWhiteSpace(cashier.Password)) ||
                     (cashier.Id.Length > 4 || cashier.Id.Length < 2 ||
                      (cashier.Password.Length > 4 || cashier.Password.Length < 2)))
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "Kasiyer login işleminde Id veya şifre boş olamaz.");
-                if (cashier != null)
+                if(cashier != null)
                     _ecrInterface.SendCmd2ECR(Tags.msgREQ_CashierLogin, new Members()
                     {
                         CashierId = cashier.Id,
                         CashierPwd = cashier.Password
                     }, ref _result);
                 int code = int.Parse(_result.InternalErrNum);
-                if (!code.Equals(0))
+                if(!code.Equals(0))
                 {
                     Helpers.Conditional.SetOKCWarningInformation(ref _processInformation, code);
                 }
@@ -212,7 +212,7 @@ namespace Panaroma.OKC.Integration.Library
                     Thread.Sleep(1000);
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -229,7 +229,7 @@ namespace Panaroma.OKC.Integration.Library
                 SetApplicationResult(-100, null);
                 Thread.Sleep(3000);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -260,11 +260,11 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GMP3Echo, reqMembers, ref _result);
                 SetApplicationResult(-100, (object)null);
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch(ArgumentOutOfRangeException ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -277,10 +277,10 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryReceiptBegin");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 OKC okcStatus = TryGetOKCStatus();
-                if (okcStatus.ProcessInformation.HasError)
+                if(okcStatus.ProcessInformation.HasError)
                 {
                     Helpers.Conditional.SetExceptionInformation(ref _processInformation,
                         okcStatus.ProcessInformation.InformationMessages.Exception ??
@@ -288,14 +288,14 @@ namespace Panaroma.OKC.Integration.Library
                     return this;
                 }
 
-                if (((OKCStatus)okcStatus.ProcessInformation.InformationMessages.Message).ReceiptIsOpen)
+                if(((OKCStatus)okcStatus.ProcessInformation.InformationMessages.Message).ReceiptIsOpen)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "Açıkta zaten bir fiş var.");
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.DocumentType) || requestMembers.DocumentType.Length > 2)
+                if(string.IsNullOrEmpty(requestMembers.DocumentType) || requestMembers.DocumentType.Length > 2)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("{0} boş olamaz || {1} 2 karaketerden uzun olamaz.", "DocumentType",
@@ -303,12 +303,12 @@ namespace Panaroma.OKC.Integration.Library
                     return this;
                 }
 
-                switch (requestMembers.DocumentType)
+                switch(requestMembers.DocumentType)
                 {
                     case "02":
                     case "03":
                     case "04":
-                        if (string.IsNullOrEmpty(requestMembers.Tckn) && string.IsNullOrEmpty(requestMembers.Vkn))
+                        if(string.IsNullOrEmpty(requestMembers.Tckn) && string.IsNullOrEmpty(requestMembers.Vkn))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format(
@@ -317,7 +317,7 @@ namespace Panaroma.OKC.Integration.Library
                             return this;
                         }
 
-                        if (requestMembers.DocumentType.Equals("02") &&
+                        if(requestMembers.DocumentType.Equals("02") &&
                             (string.IsNullOrEmpty(requestMembers.BillSerialNo) ||
                              requestMembers.BillSerialNo.Length < 7))
                         {
@@ -330,7 +330,7 @@ namespace Panaroma.OKC.Integration.Library
 
                     case "05":
                     case "07":
-                        if (string.IsNullOrEmpty(requestMembers.Title))
+                        if(string.IsNullOrEmpty(requestMembers.Title))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format(
@@ -339,9 +339,9 @@ namespace Panaroma.OKC.Integration.Library
                             return this;
                         }
 
-                        if (requestMembers.DocumentType.Equals("07"))
+                        if(requestMembers.DocumentType.Equals("07"))
                         {
-                            if (string.IsNullOrEmpty(requestMembers.Amount))
+                            if(string.IsNullOrEmpty(requestMembers.Amount))
                             {
                                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                     string.Format("Doküman tipi olarak; Avans seçildiğinde {0} alanı boş geçilemez.",
@@ -349,7 +349,7 @@ namespace Panaroma.OKC.Integration.Library
                                 return this;
                             }
 
-                            if (string.IsNullOrEmpty(requestMembers.Tckn) && string.IsNullOrEmpty(requestMembers.Vkn))
+                            if(string.IsNullOrEmpty(requestMembers.Tckn) && string.IsNullOrEmpty(requestMembers.Vkn))
                             {
                                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                     string.Format(
@@ -364,7 +364,7 @@ namespace Panaroma.OKC.Integration.Library
                         break;
 
                     case "08":
-                        if (string.IsNullOrEmpty(requestMembers.Commision))
+                        if(string.IsNullOrEmpty(requestMembers.Commision))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format(
@@ -373,7 +373,7 @@ namespace Panaroma.OKC.Integration.Library
                             return this;
                         }
 
-                        if (string.IsNullOrEmpty(requestMembers.SubscriberNo))
+                        if(string.IsNullOrEmpty(requestMembers.SubscriberNo))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format(
@@ -382,7 +382,7 @@ namespace Panaroma.OKC.Integration.Library
                             return this;
                         }
 
-                        if (string.IsNullOrEmpty(requestMembers.Title))
+                        if(string.IsNullOrEmpty(requestMembers.Title))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format(
@@ -391,7 +391,7 @@ namespace Panaroma.OKC.Integration.Library
                             return this;
                         }
 
-                        if (string.IsNullOrEmpty(requestMembers.Amount))
+                        if(string.IsNullOrEmpty(requestMembers.Amount))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format(
@@ -400,7 +400,7 @@ namespace Panaroma.OKC.Integration.Library
                             return this;
                         }
 
-                        if (requestMembers.BillSerialNo.Length < 7)
+                        if(requestMembers.BillSerialNo.Length < 7)
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format("{0} en az 7 karakter olmalı.", "BillSerialNo"));
@@ -413,7 +413,7 @@ namespace Panaroma.OKC.Integration.Library
                     case "0B":
                     case "0C":
                     case "0F":
-                        if (string.IsNullOrEmpty(requestMembers.BillSerialNo))
+                        if(string.IsNullOrEmpty(requestMembers.BillSerialNo))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format(
@@ -422,16 +422,16 @@ namespace Panaroma.OKC.Integration.Library
                             return this;
                         }
 
-                        if (requestMembers.BillSerialNo.Length < 7)
+                        if(requestMembers.BillSerialNo.Length < 7)
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format("{0} en az 7 karakter olmalı.", "BillSerialNo"));
                             return this;
                         }
 
-                        if (requestMembers.DocumentType.Equals("0F"))
+                        if(requestMembers.DocumentType.Equals("0F"))
                         {
-                            if (string.IsNullOrEmpty(requestMembers.TranDate))
+                            if(string.IsNullOrEmpty(requestMembers.TranDate))
                             {
                                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                     string.Format(
@@ -440,7 +440,7 @@ namespace Panaroma.OKC.Integration.Library
                                 return this;
                             }
 
-                            if (string.IsNullOrEmpty(requestMembers.TranTime))
+                            if(string.IsNullOrEmpty(requestMembers.TranTime))
                             {
                                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                     string.Format(
@@ -455,7 +455,7 @@ namespace Panaroma.OKC.Integration.Library
                         break;
 
                     case "0A":
-                        if (string.IsNullOrEmpty(requestMembers.ReceiptNum))
+                        if(string.IsNullOrEmpty(requestMembers.ReceiptNum))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format(
@@ -468,7 +468,7 @@ namespace Panaroma.OKC.Integration.Library
 
                     case "0D":
                     case "0E":
-                        if (string.IsNullOrEmpty(requestMembers.Amount))
+                        if(string.IsNullOrEmpty(requestMembers.Amount))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format(
@@ -490,7 +490,7 @@ namespace Panaroma.OKC.Integration.Library
                     UniqenNumber = _result.MidleUniqueNumber
                 });
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -503,37 +503,37 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryDoTransaction");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (!((OKCStatus)TryGetOKCStatus().ProcessInformation.InformationMessages.Message).ReceiptIsOpen)
+                if(!((OKCStatus)TryGetOKCStatus().ProcessInformation.InformationMessages.Message).ReceiptIsOpen)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "Açıkta fiş yok. Öncelikle yeni bir fiş açın.");
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.ProcessType))
+                if(string.IsNullOrEmpty(requestMembers.ProcessType))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("{0} alanı boş olamaz.", "ProcessType"));
                     return this;
                 }
 
-                if (requestMembers.ProcessType.Length > 2)
+                if(requestMembers.ProcessType.Length > 2)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("{0} alanı 2 karakterden uzun olamaz.", "ProcessType"));
                     return this;
                 }
 
-                if (!string.IsNullOrEmpty(requestMembers.DepartmentId) && requestMembers.DepartmentId.Length > 2)
+                if(!string.IsNullOrEmpty(requestMembers.DepartmentId) && requestMembers.DepartmentId.Length > 2)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("{0} alanı 2 karakterden uzun olamaz.", "DepartmentId"));
                     return this;
                 }
 
-                if (requestMembers.ProcessType.Equals("A3") && string.IsNullOrEmpty(requestMembers.Amount) &&
+                if(requestMembers.ProcessType.Equals("A3") && string.IsNullOrEmpty(requestMembers.Amount) &&
                     string.IsNullOrEmpty(requestMembers.Rate))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
@@ -541,14 +541,14 @@ namespace Panaroma.OKC.Integration.Library
                     return this;
                 }
 
-                if (requestMembers.ProcessType.Equals("A4") && string.IsNullOrEmpty(requestMembers.Rate))
+                if(requestMembers.ProcessType.Equals("A4") && string.IsNullOrEmpty(requestMembers.Rate))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "Artırım işleminde artırım oranı dolu olmalıdır.");
                     return this;
                 }
 
-                if (requestMembers.ProcessType.Equals("A8"))
+                if(requestMembers.ProcessType.Equals("A8"))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "İptal işleminde TranId boş geçilemez.");
@@ -565,7 +565,7 @@ namespace Panaroma.OKC.Integration.Library
                     TranId = _result.TranId
                 });
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -578,9 +578,9 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryDoBatchTransaction");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (requestMembers.BatchTranItems == null ||
+                if(requestMembers.BatchTranItems == null ||
                     !((IEnumerable<BatchTranItem>)requestMembers.BatchTranItems).Any())
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
@@ -588,16 +588,16 @@ namespace Panaroma.OKC.Integration.Library
                     return this;
                 }
 
-                for (int index = 0; index < requestMembers.BatchTranItems.Length; ++index)
+                for(int index = 0; index < requestMembers.BatchTranItems.Length; ++index)
                 {
-                    if (string.IsNullOrEmpty(requestMembers.BatchTranItems[index].ProcessType))
+                    if(string.IsNullOrEmpty(requestMembers.BatchTranItems[index].ProcessType))
                     {
                         Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                             "BatchItem ProcessType alanı boş olamaz.");
                         return this;
                     }
 
-                    if (requestMembers.BatchTranItems[index].ProcessType.Length > 2)
+                    if(requestMembers.BatchTranItems[index].ProcessType.Length > 2)
                     {
                         Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                             "BatchItem ProcessType alanı 2 karakterden uzun olamaz.");
@@ -615,7 +615,7 @@ namespace Panaroma.OKC.Integration.Library
                     TranId = _result.TranId
                 });
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -628,43 +628,43 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryDoPayment");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (string.IsNullOrEmpty(requestMembers.PaymentType))
+                if(string.IsNullOrEmpty(requestMembers.PaymentType))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("Ödeme işleminde {0} dolu olmalıdır.", "PaymentType"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.Amount))
+                if(string.IsNullOrEmpty(requestMembers.Amount))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("Ödeme işleminde {0} dolu olmalıdır.", "Amount"));
                     return this;
                 }
 
-                if (requestMembers.ProcessType != null)
+                if(requestMembers.ProcessType != null)
                 {
-                    if (requestMembers.ProcessType.Equals("30") || requestMembers.ProcessType.Equals("50"))
+                    if(requestMembers.ProcessType.Equals("30") || requestMembers.ProcessType.Equals("50"))
                     {
-                        if (string.IsNullOrEmpty(requestMembers.AcquirerId))
+                        if(string.IsNullOrEmpty(requestMembers.AcquirerId))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format("İptal ve iade işleminde {0} dolu olmalıdır.", "AcquirerId"));
                             return this;
                         }
 
-                        if (requestMembers.ProcessType.Equals("30"))
+                        if(requestMembers.ProcessType.Equals("30"))
                         {
-                            if (string.IsNullOrEmpty(requestMembers.BatchNum))
+                            if(string.IsNullOrEmpty(requestMembers.BatchNum))
                             {
                                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                     string.Format("İptal işleminde {0} dolu olmalıdır.", "BatchNum"));
                                 return this;
                             }
 
-                            if (string.IsNullOrEmpty(requestMembers.StanNum))
+                            if(string.IsNullOrEmpty(requestMembers.StanNum))
                             {
                                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                     string.Format("İptal işleminde {0} dolu olmalıdır.", "StanNum"));
@@ -672,7 +672,7 @@ namespace Panaroma.OKC.Integration.Library
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(requestMembers.ReferenceNumber) &&
+                        if(!string.IsNullOrEmpty(requestMembers.ReferenceNumber) &&
                             requestMembers.ReferenceNumber.Length < 10)
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
@@ -681,7 +681,7 @@ namespace Panaroma.OKC.Integration.Library
                         }
                     }
 
-                    if (requestMembers.ProcessType.Equals("02") && string.IsNullOrEmpty(requestMembers.InstallmentCnt))
+                    if(requestMembers.ProcessType.Equals("02") && string.IsNullOrEmpty(requestMembers.InstallmentCnt))
                     {
                         Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                             string.Format("Taksitli satış işleminde {0} dolu olmalıdır.", "InstallmentCnt"));
@@ -692,17 +692,17 @@ namespace Panaroma.OKC.Integration.Library
                 Helpers.MembersHelper.SetDefaultPadLeft(ref requestMembers);
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_DoPayment, requestMembers, ref _result);
                 int code = int.Parse(_result.InternalErrNum);
-                if (code.Equals(0))
+                if(code.Equals(0))
                 {
                     Func<string, bool> func = response =>
                     {
-                        if (_result.ResponseCode == null)
+                        if(_result.ResponseCode == null)
                             return false;
-                        if (!_result.ResponseCode.Equals("00") && !_result.ResponseCode.Equals("08"))
+                        if(!_result.ResponseCode.Equals("00") && !_result.ResponseCode.Equals("08"))
                             return _result.ResponseCode.Equals("11");
                         return true;
                     };
-                    if (requestMembers.PaymentType.Equals("02") && func(_result.ResponseCode))
+                    if(requestMembers.PaymentType.Equals("02") && func(_result.ResponseCode))
                     {
                         Helpers.Conditional.SetSuccessInformation(ref _processInformation, new BankResponse()
                         {
@@ -725,7 +725,7 @@ namespace Panaroma.OKC.Integration.Library
                     }
                     else
                     {
-                        if (requestMembers.PaymentType.Equals("02") && !func(_result.ResponseCode))
+                        if(requestMembers.PaymentType.Equals("02") && !func(_result.ResponseCode))
                         {
                             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                                 string.Format("Banka işlemi başarısız. Hata kodu: {0}", _result.ResponseCode));
@@ -738,7 +738,7 @@ namespace Panaroma.OKC.Integration.Library
                 else
                     Helpers.Conditional.SetOKCWarningInformation(ref _processInformation, code);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -751,12 +751,12 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryReceiptEnd");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_ReceiptEnd, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -772,7 +772,7 @@ namespace Panaroma.OKC.Integration.Library
                 Helpers.MembersHelper.SetDefaultPadLeft(ref requestMembers);
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_FreePrint, requestMembers, ref _result);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -785,10 +785,10 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryGetOKCStatus");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_Ping, new Members(), ref _result);
-                if (string.IsNullOrEmpty(_result.InternalErrNum) || !int.Parse(_result.InternalErrNum).Equals(0))
+                if(string.IsNullOrEmpty(_result.InternalErrNum) || !int.Parse(_result.InternalErrNum).Equals(0))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "Cihaz bilgisi alınamadı. İnternet bağlantısını kontrol edin.");
@@ -813,11 +813,11 @@ namespace Panaroma.OKC.Integration.Library
                     EjRemainigCountOfLines = _result.EjRemainingCountOfLines,
                     TranStatusDescription = Helpers.ReceiptHelper.GetStatusDescription(_result.TranStatus)
                 };
-                if (_result.TranStatus.Equals("3") || _result.TranStatus.Equals("4"))
+                if(_result.TranStatus.Equals("3") || _result.TranStatus.Equals("4"))
                     okcStatus.ReceiptIsOpen = true;
-                if (okcStatus.IsConnected && okcStatus.ReceiptIsOpen)
+                if(okcStatus.IsConnected && okcStatus.ReceiptIsOpen)
                 {
-                    if (okcStatus.EcrMode == EcrModeType.ADMIN)
+                    if(okcStatus.EcrMode == EcrModeType.ADMIN)
                         _ecrInterface.SendCmd2ECR(Tags.msgREQ_ChangeEcrMode, new Members()
                         {
                             EcrMode = "02",
@@ -827,13 +827,13 @@ namespace Panaroma.OKC.Integration.Library
                     TryGetReceiptTotal();
                     Func<string> func = () =>
                     {
-                        if (string.IsNullOrEmpty(_result.Amount))
+                        if(string.IsNullOrEmpty(_result.Amount))
                             return null;
-                        if (!(int.Parse(_result.Amount).ToString() == "0"))
+                        if(!(int.Parse(_result.Amount).ToString() == "0"))
                             return int.Parse(_result.Amount).ToString();
                         return null;
                     };
-                    if (_result.PaymentSummryCnt.Equals(0))
+                    if(_result.PaymentSummryCnt.Equals(0))
                     {
                         okcStatus.Amount = func();
                     }
@@ -848,7 +848,7 @@ namespace Panaroma.OKC.Integration.Library
 
                 Helpers.Conditional.SetSuccessInformation(ref _processInformation, okcStatus);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -858,7 +858,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public OKC TryChangeEcrMode(string ecrMode)
         {
-            if (string.IsNullOrEmpty(ecrMode) || string.IsNullOrWhiteSpace(ecrMode) || !ecrMode.Length.Equals(2))
+            if(string.IsNullOrEmpty(ecrMode) || string.IsNullOrWhiteSpace(ecrMode) || !ecrMode.Length.Equals(2))
             {
                 Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                     "EcrMode boş veya iki karakterden kısa olamaz.");
@@ -873,9 +873,9 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryChangeEcrMode");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (string.IsNullOrEmpty(_cashier?.Id) || string.IsNullOrWhiteSpace(_cashier.Id) ||
+                if(string.IsNullOrEmpty(_cashier?.Id) || string.IsNullOrWhiteSpace(_cashier.Id) ||
                     (string.IsNullOrEmpty(_cashier.Password) || string.IsNullOrWhiteSpace(_cashier.Password)))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
@@ -892,12 +892,12 @@ namespace Panaroma.OKC.Integration.Library
                 Helpers.MembersHelper.SetDefaultPadLeft(ref members);
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_ChangeEcrMode, members, ref _result);
                 int code = int.Parse(_result.InternalErrNum);
-                if (code.Equals(0))
+                if(code.Equals(0))
                     Helpers.Conditional.SetSuccessInformation(ref _processInformation);
                 else
                     Helpers.Conditional.SetOKCWarningInformation(ref _processInformation, code);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -910,7 +910,7 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryGetReceiptTotal");
-                if (CheckOkcConnection())
+                if(CheckOkcConnection())
                 {
                     Members member = new Members()
                     {
@@ -929,7 +929,7 @@ namespace Panaroma.OKC.Integration.Library
                     return this;
                 }
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, exception);
             }
@@ -942,16 +942,16 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryCardInfo");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (string.IsNullOrEmpty(requestMembers.CardPrefix))
+                if(string.IsNullOrEmpty(requestMembers.CardPrefix))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("CardInfo işleminde {0} alanı dolu olmalıdır.", "CardPrefix"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.AcquirerId))
+                if(string.IsNullOrEmpty(requestMembers.AcquirerId))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("CardInfo işleminde {0} alanı dolu olmalıdır.", "AcquirerId"));
@@ -962,7 +962,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_InfoInquiry, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -975,9 +975,9 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TrySetHeader");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (headers == null || headers.Count > 8 || headers.Keys.Any(e => e > 8))
+                if(headers == null || headers.Count > 8 || headers.Keys.Any(e => e > 8))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "Header bilgileri boş alamaz || Başlık sayısı 8 den büyük olamaz || Satır numarası 8 den büyük olamaz.");
@@ -985,20 +985,20 @@ namespace Panaroma.OKC.Integration.Library
                 }
 
                 int resultId = 0;
-                foreach (KeyValuePair<byte, string> header in headers)
+                foreach(KeyValuePair<byte, string> header in headers)
                 {
                     _ecrInterface.SendCmd2ECR(Tags.msgREQ_SetHeader, new Members()
                     {
                         HeaderText = header.Value,
                         LineNum = header.Key.ToString()
                     }, ref _result);
-                    if ((resultId = int.Parse(_result.InternalErrNum)) != 0)
+                    if((resultId = int.Parse(_result.InternalErrNum)) != 0)
                         break;
                 }
 
                 SetApplicationResult(resultId, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1011,7 +1011,7 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryGetExchange");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _result = new Members()
                 {
@@ -1021,7 +1021,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GetExchange, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1034,12 +1034,12 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryGetVatRates");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GetVatRates, new Members(), ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1052,20 +1052,20 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryReceiptInquiry");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _result = new Members()
                 {
                     CreditPaymentResult = new CreditPaymentResultTable[20]
                 };
-                if (string.IsNullOrEmpty(requestMembers.ZNum))
+                if(string.IsNullOrEmpty(requestMembers.ZNum))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("ReceiptInquiry işleminde {0} alanı dolu olmalıdır.", "ZNum"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.ReceiptNum))
+                if(string.IsNullOrEmpty(requestMembers.ReceiptNum))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("ReceiptInquiry işleminde {0} alanı dolu olmalıdır.", "ReceiptNum"));
@@ -1077,7 +1077,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_ReceiptInq, requestMembers, ref _result);
                 SetApplicationResult(-100, new ReceiptInquiryResponse().SetResponse(_result));
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1090,38 +1090,38 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(hybridMembers.RequestMembers, "TrySetEcrConfig");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 ulong ecrConfig = 0x0000000000000000;
-                if (hybridMembers.EcrConfig.IsDisableCashControl)
+                if(hybridMembers.EcrConfig.IsDisableCashControl)
                     ecrConfig |= 0x01;
-                if (hybridMembers.EcrConfig.IsDisableErrorsMessages)
+                if(hybridMembers.EcrConfig.IsDisableErrorsMessages)
                     ecrConfig |= 0x02;
-                if (hybridMembers.EcrConfig.IsDisableWarningMessages)
+                if(hybridMembers.EcrConfig.IsDisableWarningMessages)
                     ecrConfig |= 0x04;
-                if (hybridMembers.EcrConfig.IsDisableInformationMessages)
+                if(hybridMembers.EcrConfig.IsDisableInformationMessages)
                     ecrConfig |= 0x08;
-                if (hybridMembers.EcrConfig.IsDisableReceiptFooterMessages)
+                if(hybridMembers.EcrConfig.IsDisableReceiptFooterMessages)
                     ecrConfig |= 0x10;
-                if (hybridMembers.EcrConfig.IsDisableDepartmentLimitMessages)
+                if(hybridMembers.EcrConfig.IsDisableDepartmentLimitMessages)
                     ecrConfig |= 0x80;
-                if (hybridMembers.EcrConfig.IsActiveEArchiveSecondCopy)
+                if(hybridMembers.EcrConfig.IsActiveEArchiveSecondCopy)
                     ecrConfig |= 0x0200;
-                if (hybridMembers.EcrConfig.IsActiveEInvoiceSecondCopy)
+                if(hybridMembers.EcrConfig.IsActiveEInvoiceSecondCopy)
                     ecrConfig |= 0x0400;
-                if (hybridMembers.EcrConfig.IsActiveCollectionReceiptsSecondCopy)
+                if(hybridMembers.EcrConfig.IsActiveCollectionReceiptsSecondCopy)
                     ecrConfig |= 0x0800;
-                if (hybridMembers.EcrConfig.IsDisableCardInfoRequest)
+                if(hybridMembers.EcrConfig.IsDisableCardInfoRequest)
                     ecrConfig |= 0x1000;
-                if (hybridMembers.EcrConfig.IsDisableExitFromSaleWithKeyX)
+                if(hybridMembers.EcrConfig.IsDisableExitFromSaleWithKeyX)
                     ecrConfig |= 0x4000;
-                if (hybridMembers.EcrConfig.IsDisableExitDeviceInSetMenu)
+                if(hybridMembers.EcrConfig.IsDisableExitDeviceInSetMenu)
                     ecrConfig |= 0x2000;
-                if (hybridMembers.EcrConfig.IsDisableSalesScreenTimeout)
+                if(hybridMembers.EcrConfig.IsDisableSalesScreenTimeout)
                     ecrConfig |= 0x8000;
-                if (hybridMembers.EcrConfig.IsEnableRed51)
+                if(hybridMembers.EcrConfig.IsEnableRed51)
                     ecrConfig |= 0x10000;
-                if (hybridMembers.EcrConfig.IsEnableDiscount)
+                if(hybridMembers.EcrConfig.IsEnableDiscount)
                     ecrConfig |= 0x20000;
                 Members requestMembers = hybridMembers.RequestMembers;
                 Helpers.MembersHelper.SetDefaultPadLeft(ref requestMembers);
@@ -1129,7 +1129,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_EcrConfig, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1142,12 +1142,12 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryRestartApp");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_RestartApp, new Members(), ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1160,16 +1160,16 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TrySetExchange");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (string.IsNullOrEmpty(requestMembers.CurrencyCodes))
+                if(string.IsNullOrEmpty(requestMembers.CurrencyCodes))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetExchange işleminde {0} alanı dolu olmalıdır.", "CurrencyCodes"));
                     return this;
                 }
 
-                if (requestMembers.CurrencyCodes.Length < 2)
+                if(requestMembers.CurrencyCodes.Length < 2)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetExchange işleminde {0} en az bir adet döviz kuru seçilmelidir.",
@@ -1180,7 +1180,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_SetExchange, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1193,9 +1193,9 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TrySetPaper");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (string.IsNullOrEmpty(requestMembers.PaperStatus))
+                if(string.IsNullOrEmpty(requestMembers.PaperStatus))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetPaper işleminde {0} alanı dolu olmalıdır.", "PaperStatus"));
@@ -1205,7 +1205,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_SetPaperStatus, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1218,7 +1218,7 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryGetDepartmentList");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _result = new Members()
                 {
@@ -1227,7 +1227,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GetDepList, new Members(), ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1240,23 +1240,23 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TrySetDepartmentList");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (string.IsNullOrEmpty(requestMembers.ItemName))
+                if(string.IsNullOrEmpty(requestMembers.ItemName))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetDepartmentList işlemi için {0} alanı dolu olmalı.", "ItemName"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.Amount))
+                if(string.IsNullOrEmpty(requestMembers.Amount))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetDepartmentList işlemi için {0} alanı dolu olmalı.", "Amount"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.DepLimitAmount))
+                if(string.IsNullOrEmpty(requestMembers.DepLimitAmount))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetDepartmentList işlemi için {0} alanı dolu olmalı.", "DepLimitAmount"));
@@ -1267,7 +1267,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_SetDepList, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1280,16 +1280,16 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TrySetDepartmentList");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (departments == null || !((IEnumerable<Department>)departments).Any() || departments.Length > 8)
+                if(departments == null || !((IEnumerable<Department>)departments).Any() || departments.Length > 8)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         "TrySetDepartmentList işlemi için Departman boş olamaz || Departman sayısı 8 den büyük olamaz.");
                     return this;
                 }
 
-                foreach (Department department in departments)
+                foreach(Department department in departments)
                 {
                     Members members = new Members()
                     {
@@ -1302,7 +1302,7 @@ namespace Panaroma.OKC.Integration.Library
                     Helpers.MembersHelper.SetDefaultPadLeft(ref members);
                     _ecrInterface.SendCmd2ECR(Tags.msgREQ_SetDepList, members, ref _result);
                     int code = int.Parse(_result.InternalErrNum);
-                    if (code != 0)
+                    if(code != 0)
                     {
                         Helpers.Conditional.SetOKCWarningInformation(ref _processInformation, code);
                         break;
@@ -1311,7 +1311,7 @@ namespace Panaroma.OKC.Integration.Library
 
                 Helpers.Conditional.SetSuccessInformation(ref _processInformation);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1327,7 +1327,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface?.COMM_Close();
                 Helpers.Conditional.SetSuccessInformation(ref _processInformation);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1351,12 +1351,12 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryPowerOFF");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_PowerOFF, new Members(), ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1369,17 +1369,17 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryInfoInquiryResponse");
-                if (!string.IsNullOrEmpty(requestMembers.InstallmentCnt))
+                if(!string.IsNullOrEmpty(requestMembers.InstallmentCnt))
                     requestMembers.InstallmentCnt = requestMembers.InstallmentCnt.PadLeft(4, '0');
-                if (!string.IsNullOrEmpty(requestMembers.Amount))
+                if(!string.IsNullOrEmpty(requestMembers.Amount))
                     requestMembers.Amount = requestMembers.Amount.PadLeft(12, '0');
-                if (!string.IsNullOrEmpty(requestMembers.AcquirerId))
+                if(!string.IsNullOrEmpty(requestMembers.AcquirerId))
                     requestMembers.AcquirerId = requestMembers.AcquirerId.PadLeft(4, '0');
                 Helpers.MembersHelper.SetDefaultPadLeft(ref requestMembers);
                 _ecrInterface.SendCmd2ECR(Tags.msgRSP_InfoInquiry, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1392,12 +1392,12 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryOpenDrawer");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_OpenDrawer, new Members(), ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1410,12 +1410,12 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryGetDrawerStatus");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GetDrawerStat, new Members(), ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1428,12 +1428,12 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryGetUniqueId");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GetUniqueId, new Members(), ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1446,23 +1446,23 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TrySetGroup");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (string.IsNullOrEmpty(requestMembers.GroupNo))
+                if(string.IsNullOrEmpty(requestMembers.GroupNo))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetGroup işleminde {0} alanı dolu olmalıdır.", "GroupNo"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.DepartmentId))
+                if(string.IsNullOrEmpty(requestMembers.DepartmentId))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetGroup işleminde {0} alanı dolu olmalıdır.", "DepartmentId"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.GroupName))
+                if(string.IsNullOrEmpty(requestMembers.GroupName))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetGroup işleminde {0} alanı dolu olmalıdır.", "GroupName"));
@@ -1473,7 +1473,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_SetGroup, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1486,51 +1486,51 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TrySetPLU");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
-                if (string.IsNullOrEmpty(requestMembers.PLUNo))
+                if(string.IsNullOrEmpty(requestMembers.PLUNo))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetPLU işleminde {0} alanı dolu olmalıdır.", "PLUNo"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.Barcode))
+                if(string.IsNullOrEmpty(requestMembers.Barcode))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetPLU işleminde {0} alanı dolu olmalıdır.", "Barcode"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.Amount))
+                if(string.IsNullOrEmpty(requestMembers.Amount))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetPLU işleminde {0} alanı dolu olmalıdır.", "Amount"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.UnitCode))
+                if(string.IsNullOrEmpty(requestMembers.UnitCode))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetPLU işleminde {0} alanı dolu olmalıdır.", "UnitCode"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.ItemName))
+                if(string.IsNullOrEmpty(requestMembers.ItemName))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetPLU işleminde {0} alanı dolu olmalıdır.", "ItemName"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.GroupNo))
+                if(string.IsNullOrEmpty(requestMembers.GroupNo))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("SetPLU işleminde {0} alanı dolu olmalıdır.", "GroupNo"));
                     return this;
                 }
 
-                if (requestMembers.StockControl.Equals("1") && string.IsNullOrEmpty(requestMembers.StockPiece))
+                if(requestMembers.StockControl.Equals("1") && string.IsNullOrEmpty(requestMembers.StockPiece))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format(
@@ -1540,7 +1540,7 @@ namespace Panaroma.OKC.Integration.Library
                 }
 
                 Helpers.MembersHelper.SetDefaultPadLeft(ref requestMembers);
-                if (Convert.ToInt32(requestMembers.PLUNo) > 100000)
+                if(Convert.ToInt32(requestMembers.PLUNo) > 100000)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("{0} 100.000 den büyük olamaz.", requestMembers.PLUNo));
@@ -1550,7 +1550,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_SetPLU, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1563,7 +1563,7 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryGetBankList");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _result = new Members()
                 {
@@ -1572,7 +1572,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GetBankList, new Members(), ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1588,9 +1588,9 @@ namespace Panaroma.OKC.Integration.Library
 
         private void ApplicationInit(bool gmp3Pair = false)
         {
-            if (_ecrInterface == null)
+            if(_ecrInterface == null)
                 _ecrInterface = new EcrInterface();
-            switch (_connectionType)
+            switch(_connectionType)
             {
                 case ConnectionType.TCP_IP:
                     OKCConfiguration = OKCConfigurationFactory.Build(_ethernetConfiguration);
@@ -1603,14 +1603,14 @@ namespace Panaroma.OKC.Integration.Library
                     break;
             }
 
-            if (gmp3Pair)
+            if(gmp3Pair)
             {
                 TryGMP3Pair();
             }
             else
             {
                 TryGMP3Echo();
-                if (string.IsNullOrEmpty(this._result.InternalErrNum) || !this._result.InternalErrNum.Equals("0") ||
+                if(string.IsNullOrEmpty(this._result.InternalErrNum) || !this._result.InternalErrNum.Equals("0") ||
                     (string.IsNullOrEmpty(this._result.groupDF6F.status) || this._result.groupDF6F.status.Equals("1D")))
                     return;
                 TryGMP3Pair();
@@ -1627,7 +1627,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_PrintReport, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1637,11 +1637,11 @@ namespace Panaroma.OKC.Integration.Library
 
         private void SetApplicationResult(int resultId = -100, object returnResult = null)
         {
-            if (resultId.Equals(-100))
+            if(resultId.Equals(-100))
                 resultId = int.Parse(_result.InternalErrNum);
-            if (resultId == 0)
+            if(resultId == 0)
             {
-                if (returnResult == null)
+                if(returnResult == null)
                     Helpers.Conditional.SetSuccessInformation(ref _processInformation);
                 else
                     Helpers.Conditional.SetSuccessInformation(ref _processInformation, returnResult);
@@ -1660,10 +1660,10 @@ namespace Panaroma.OKC.Integration.Library
         private bool CheckOkcConnection()
         {
             TryPing();
-            if (!string.IsNullOrEmpty(_result.InternalErrNum) && _result.InternalErrNum.Equals("0"))
+            if(!string.IsNullOrEmpty(_result.InternalErrNum) && _result.InternalErrNum.Equals("0"))
                 return true;
             ApplicationInit(false);
-            if (!string.IsNullOrEmpty(_result.InternalErrNum))
+            if(!string.IsNullOrEmpty(_result.InternalErrNum))
                 return _result.InternalErrNum.Equals("0");
             return false;
         }
@@ -1673,20 +1673,20 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(requestMembers, "TryGetPLUList");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 _result = new Members()
                 {
                     PLUList = new PLUTable[100]
                 };
-                if (string.IsNullOrEmpty(requestMembers.StartPLUNo))
+                if(string.IsNullOrEmpty(requestMembers.StartPLUNo))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("GetPLUList işleminde {0} alanı dolu olmalıdır.", "StartPLUNo"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.EndPLUNo))
+                if(string.IsNullOrEmpty(requestMembers.EndPLUNo))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("GetPLUList işleminde {0} alanı dolu olmalıdır.", "EndPLUNo"));
@@ -1697,14 +1697,14 @@ namespace Panaroma.OKC.Integration.Library
                 int startPLUNo = Convert.ToInt32(requestMembers.StartPLUNo);
                 int endPLUNo = Convert.ToInt32(requestMembers.EndPLUNo);
                 int pluLimit = 100000;
-                if (startPLUNo > pluLimit)
+                if(startPLUNo > pluLimit)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("GetPLUList işleminde {0} 100.000 den büyük olamaz.", "StartPLUNo"));
                     return this;
                 }
 
-                if (endPLUNo > 100000)
+                if(endPLUNo > 100000)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("GetPLUList işleminde {0} 100.000 den büyük olamaz.", (object)"EndPLUNo"));
@@ -1714,15 +1714,15 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GetPLUList, requestMembers, ref _result);
                 SetApplicationResult(-100, null);
             }
-            catch (FormatException ex)
+            catch(FormatException ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
-            catch (OverflowException ex)
+            catch(OverflowException ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1735,7 +1735,7 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryPrintZReport");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 Members members = new Members()
                 {
@@ -1745,7 +1745,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_PrintReport, members, ref _result);
                 SetApplicationResult(-100, (object)_result.SoftCopyOfReport);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref this._processInformation, ex);
             }
@@ -1758,7 +1758,7 @@ namespace Panaroma.OKC.Integration.Library
             try
             {
                 MethodInit(Request, "TryGetLastZReportSoftCopy");
-                if (!CheckOkcConnection())
+                if(!CheckOkcConnection())
                     return this;
                 Members members = new Members()
                 {
@@ -1768,7 +1768,7 @@ namespace Panaroma.OKC.Integration.Library
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_PrintReport, members, ref _result);
                 SetApplicationResult(-100, _result.SoftCopyOfReport);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
@@ -1779,7 +1779,7 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintLastZReportCopy()
         {
             MethodInit(Request, "TryPrintLastZReportCopy");
-            if (CheckOkcConnection())
+            if(CheckOkcConnection())
                 return TryPrintReport(new Members(), string.Format("{0:x3}", ECR_RPRT_TYPS.Z_LAST_COPY));
             return this;
         }
@@ -1787,7 +1787,7 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintXReport()
         {
             MethodInit(Request, "TryPrintXReport");
-            if (CheckOkcConnection())
+            if(CheckOkcConnection())
                 return TryPrintReport(new Members(), string.Format("{0:x3}", 1048576));
             return this;
         }
@@ -1795,9 +1795,9 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintXPLUSaleReport(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintXPLUSaleReport");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return this;
-            if (requestMembers.StartPLUNo.Length != 0 || requestMembers.EndPLUNo.Length != 0)
+            if(requestMembers.StartPLUNo.Length != 0 || requestMembers.EndPLUNo.Length != 0)
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.X_PLU_SALE_PP));
             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                 "Start ve End PluNo lar eksik olamaz.");
@@ -1807,9 +1807,9 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintZPLUSaleReport(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintZPLUSaleReport");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return this;
-            if (requestMembers.StartPLUNo.Length != 0 || requestMembers.EndPLUNo.Length != 0)
+            if(requestMembers.StartPLUNo.Length != 0 || requestMembers.EndPLUNo.Length != 0)
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.Z_PLU_SALE_PP));
             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                 "Start ve End PluNo lar eksik olamaz.");
@@ -1819,9 +1819,9 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintXPLUProgram(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintXPLUProgram");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return this;
-            if (requestMembers.StartPLUNo.Length != 0 && requestMembers.EndPLUNo.Length != 0)
+            if(requestMembers.StartPLUNo.Length != 0 && requestMembers.EndPLUNo.Length != 0)
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.X_PLU_PRG_PP));
             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                 "Start ve End PluNo lar eksik olamaz.");
@@ -1831,7 +1831,7 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintEkuDetailReport()
         {
             MethodInit(Request, "TryPrintEkuDetailReport");
-            if (CheckOkcConnection())
+            if(CheckOkcConnection())
                 return TryPrintReport(new Members(), string.Format("{0:x3}", ECR_RPRT_TYPS.EJ_DETAIL));
             return this;
         }
@@ -1839,7 +1839,7 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintEkuZDetailReport()
         {
             MethodInit(Request, "TryPrintEkuZDetailReport");
-            if (CheckOkcConnection())
+            if(CheckOkcConnection())
                 return TryPrintReport(new Members(), string.Format("{0:x3}", ECR_RPRT_TYPS.EJ_Z_DETAIL));
             return this;
         }
@@ -1847,9 +1847,9 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintEkuReceiptDetailReportWithDatetime(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintEkuReceiptDetailReportWithDatetime");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return this;
-            if (requestMembers.StartDate.Length != 0 && requestMembers.EndDate.Length != 0)
+            if(requestMembers.StartDate.Length != 0 && requestMembers.EndDate.Length != 0)
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.EJ_R_DETAIL_DT));
             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                 "StartDate veya EndDate alanları boş olamaz.");
@@ -1859,9 +1859,9 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintEkuReceiptDetailReportWithZNoAndReceiptNo(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintEkuReceiptDetailReportWithZNoAndReceiptNo");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return this;
-            if (requestMembers.StartZNo.Length != 0 && requestMembers.EndZNo.Length != 0 &&
+            if(requestMembers.StartZNo.Length != 0 && requestMembers.EndZNo.Length != 0 &&
                 (requestMembers.StartReceiptNo.Length != 0 && requestMembers.EndReceiptNo.Length != 0))
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.EJ_R_DETAIL_ZR));
             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
@@ -1872,9 +1872,9 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintFinancalZDetailReportWithDateTime(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintFinancalZDetailReportWithDateTime");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return this;
-            if (requestMembers.StartDate.Length != 0 && requestMembers.EndDate.Length != 0)
+            if(requestMembers.StartDate.Length != 0 && requestMembers.EndDate.Length != 0)
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_Z_DTL_DD));
             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                 "StartDate veya EndDate alanları boş olamaz.");
@@ -1884,9 +1884,9 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintFinancalZDetailReportWithZNo(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintFinancalZDetailReportWithZNo");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return this;
-            if (requestMembers.StartZNo.Length != 0 && requestMembers.EndZNo.Length != 0)
+            if(requestMembers.StartZNo.Length != 0 && requestMembers.EndZNo.Length != 0)
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_Z_DTL_ZZ));
             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                 "StartZNo,EndZNo, alanları boş olamaz.");
@@ -1896,9 +1896,9 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintFinancalZReportWithDateTime(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintFinancalZReportWithDateTime");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return this;
-            if (requestMembers.StartDate.Length != 0 && requestMembers.EndDate.Length != 0)
+            if(requestMembers.StartDate.Length != 0 && requestMembers.EndDate.Length != 0)
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_Z_SMRY_DD));
             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                 "StartDate veya EndDate alanları boş olamaz.");
@@ -1908,9 +1908,9 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintFinancalZReportWithZNo(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintFinancalZReportWithZNo");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return this;
-            if (requestMembers.StartZNo.Length != 0 && requestMembers.EndZNo.Length != 0)
+            if(requestMembers.StartZNo.Length != 0 && requestMembers.EndZNo.Length != 0)
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_Z_SMRY_ZZ));
             Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                 "StartZNo,EndZNo, alanları boş olamaz.");
@@ -1920,7 +1920,7 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintLastSaleReceiptCopy()
         {
             MethodInit(Request, "TryPrintLastSaleReceiptCopy");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return TryPrintReport(new Members(), string.Format("{0:x3}", ECR_RPRT_TYPS.EJ_R_SNGL_CPY_LASTSALE));
             return this;
         }
@@ -1928,7 +1928,7 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintSalesReportWihtZNo(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintSalesReportWihtZNo");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_SALE_Z));
             return this;
         }
@@ -1936,7 +1936,7 @@ namespace Panaroma.OKC.Integration.Library
         public OKC TryPrintBankEOD()
         {
             MethodInit(Request, "TryPrintBankEOD");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
                 return TryPrintReport(new Members(), string.Format("{0:x3}", ECR_RPRT_TYPS.BANK_EOD));
             return this;
         }
@@ -1945,50 +1945,50 @@ namespace Panaroma.OKC.Integration.Library
         {
             string str;
             MethodInit(requestMembers, "TryPrintBankSlipCopy");
-            if (!CheckOkcConnection())
+            if(!CheckOkcConnection())
             {
                 return this;
             }
 
             string processType = requestMembers.ProcessType;
-            if (processType == "1" || processType == "2" || processType == "3")
+            if(processType == "1" || processType == "2" || processType == "3")
             {
-                if (string.IsNullOrEmpty(requestMembers.ZNum))
+                if(string.IsNullOrEmpty(requestMembers.ZNum))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde {0} alanı dolu olmalıdır.", "ZNum"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.ReceiptNum))
+                if(string.IsNullOrEmpty(requestMembers.ReceiptNum))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde {0} alanı dolu olmalıdır.", "ReceiptNum"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.EJNum))
+                if(string.IsNullOrEmpty(requestMembers.EJNum))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde {0} alanı dolu olmalıdır.", "EJNum"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.BatchNum))
+                if(string.IsNullOrEmpty(requestMembers.BatchNum))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde {0} alanı dolu olmalıdır.", "BatchNum"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.StanNum))
+                if(string.IsNullOrEmpty(requestMembers.StanNum))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde {0} alanı dolu olmalıdır.", "StanNum"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.AcquirerId))
+                if(string.IsNullOrEmpty(requestMembers.AcquirerId))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde {0} alanı dolu olmalıdır.", "AcquirerId"));
@@ -1997,21 +1997,21 @@ namespace Panaroma.OKC.Integration.Library
             }
             else
             {
-                if (processType != "4")
+                if(processType != "4")
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde hatalı {0}.", "ProcessType"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.BatchNum))
+                if(string.IsNullOrEmpty(requestMembers.BatchNum))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde {0} alanı dolu olmalıdır.", "BatchNum"));
                     return this;
                 }
 
-                if (string.IsNullOrEmpty(requestMembers.AcquirerId))
+                if(string.IsNullOrEmpty(requestMembers.AcquirerId))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde {0} alanı dolu olmalıdır.", "AcquirerId"));
@@ -2020,21 +2020,21 @@ namespace Panaroma.OKC.Integration.Library
             }
 
             processType = requestMembers.ProcessType;
-            if (processType == "1")
+            if(processType == "1")
             {
                 str = string.Format("{0:x3}", ECR_RPRT_TYPS.BANK_CUSTOMER_SLIP_COPY);
             }
-            else if (processType == "2")
+            else if(processType == "2")
             {
                 str = string.Format("{0:x3}", ECR_RPRT_TYPS.BANK_MERCHANT_SLIP_COPY);
             }
-            else if (processType == "3")
+            else if(processType == "3")
             {
                 str = string.Format("{0:x3}", ECR_RPRT_TYPS.BANK_BOTH_SLIP_COPY);
             }
             else
             {
-                if (processType != "4")
+                if(processType != "4")
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("PrintBankSlipCopy işleminde hatalı {0}.", "ProcessType"));

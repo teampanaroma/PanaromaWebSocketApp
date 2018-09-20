@@ -13,19 +13,13 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Panaroma.Communication.Application
 {
     public partial class MainWindow : Window, IComponentConnector
     {
-        private System.Windows.Forms.NotifyIcon notifyIcon = new System.Windows.Forms.NotifyIcon();
-        private System.Windows.Forms.ContextMenu notifyIconContexMenu = new System.Windows.Forms.ContextMenu();
-        private System.Windows.Forms.MenuItem menuItem = new System.Windows.Forms.MenuItem();
-        private System.Windows.Forms.Timer timer1 = new System.Windows.Forms.Timer();
-        private System.Windows.Forms.Timer timer2 = new System.Windows.Forms.Timer();
-        private System.Windows.Forms.Timer timer3 = new System.Windows.Forms.Timer();
-        private System.Windows.Forms.WebBrowser webBrowser = new System.Windows.Forms.WebBrowser();
-
+        private DispatcherTimer timer;
         private WebSocketServer _panaromaWebSocketServer;
         private bool _isSuccessMouseDown;
         private bool _isErrorMouseDown;
@@ -35,15 +29,12 @@ namespace Panaroma.Communication.Application
         private readonly DataGrid _dataGridError;
         private readonly DataGrid _dataGridWarning;
         private int count = 0;
-        private bool isLoad = false;
         private string okccmd = "#okccmd#";
         private string okcres = "#okcres#";
-        private string msgNotReady = "Henüz hazır değil";
-        private string msgConOpen = "Bağlantı açık";
 
         public MainWindow()
         {
-            if (ConfigurationSettings.AppSettings["ProcessType"] == "1")
+            if(ConfigurationManager.AppSettings["ProcessType"] == "1")
             {
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "WebSocket";
                 InitializeComponent();
@@ -55,14 +46,10 @@ namespace Panaroma.Communication.Application
                 _dataGridError = GetDefaultDataGrid(DataGridType.Error);
                 Loaded += new RoutedEventHandler(MainWindow_Loaded);
             }
-            else if (ConfigurationSettings.AppSettings["ProcessType"] == "2")
+            else if(ConfigurationManager.AppSettings["ProcessType"] == "2")
             {
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "ClipBoard";
                 InitializeComponent();
-                //InternetExplorerBrowserEmulation.SetBrowserEmulationVersion();
-                //webBrowser.DocumentCompleted += WebBrowser1_DocumentCompleted;
-                //string curDir = Directory.GetCurrentDirectory();
-                //webBrowser.Url = new Uri(String.Format("file:///{0}/OKC.html", curDir));
                 MainWindowProperty();
                 VisibilityDefaultStatus();
                 System.Windows.Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -70,6 +57,8 @@ namespace Panaroma.Communication.Application
                 _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
                 _dataGridError = GetDefaultDataGrid(DataGridType.Error);
                 timerDefaultValues();
+
+
             }
             else
             {
@@ -81,8 +70,9 @@ namespace Panaroma.Communication.Application
                 _dataGridWarning = GetDefaultDataGrid(DataGridType.Warning);
                 _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
                 _dataGridError = GetDefaultDataGrid(DataGridType.Error);
+                ConfigurationManager.AppSettings["BildirimSuresi"] = "5000";
                 Dispatcher.BeginInvoke(
-                    new Action(() => (new NotificationWindow(NotificationType.Information, "Uyarı ",
+                    new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
                             "Program şu anda hiç bir şekilde etkileşimde değil  !!!", Helpers.DateTimeHelper.GetDateTime()))
                         .Build().Show()), Array.Empty<object>());
             }
@@ -99,87 +89,12 @@ namespace Panaroma.Communication.Application
             ToolTip = "Bu Program WebSocket teknolojisi veya ClipBoard ile haberleşme yapar. Yalnızca Json Formatı ile habeleşme kurar.";
         }
 
-        private void NotifyIconSetings()
-        {
-            Closed += new EventHandler(Window_Closed);
-            Deactivated += new EventHandler(Window_Deactivated);
-            //notifyIcon.Icon = new System.Drawing.Icon("bird.ico");
-            notifyIcon.Visible = true;
-            notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(notifyIcon_Click);
-            notifyIcon.DoubleClick += new EventHandler(notifyIcon_DoubleClick);
-            notifyIconContexMenu.MenuItems.Add("Uygulamayı A&ç", new EventHandler(Open));
-            notifyIconContexMenu.MenuItems.Add("Uygulamayı K&apat", new EventHandler(Close));
-            notifyIconContexMenu.MenuItems.Add("Uygulama H&akkında", new EventHandler(About));
-            notifyIcon.ContextMenu = notifyIconContexMenu;
-            notifyIcon.Text = "Panaroma Bilişim Haberleşme Uygulaması";
-        }
-
         private void timerDefaultValues()
         {
-            ////timer1 yönetir
-            //timer1.Enabled = true;
-            //timer1.Interval = 100;
-            //timer1.Tick += new EventHandler(timer1_Tick);
-
-            ////timer2 yönetir
-            //timer2.Enabled = false;
-            //timer2.Interval = 80;
-            //timer2.Tick += new EventHandler(timer2_Tick);
-
-            //şimdilik test timer
-            timer3.Enabled = true;
-            timer3.Interval = 100;
-            timer3.Tick += new EventHandler(timer3_Tick);
-        }
-
-        private void notifyIcon_DoubleClick(object Sender, System.EventArgs e)
-        {
-            if (WindowState == WindowState.Minimized)
-                WindowState = WindowState.Normal;
-            Activate();
-        }
-
-        private void Window_Deactivated(object sender, System.EventArgs e)
-        {
-            if (WindowState == WindowState.Minimized)
-            {
-                Hide();
-            }
-        }
-
-        private void Window_Closed(object sender, System.EventArgs e)
-        {
-            notifyIcon.Dispose();
-        }
-
-        private void Open(object sender, System.EventArgs e)
-        {
-            if (WindowState == WindowState.Minimized)
-                WindowState = WindowState.Normal;
-            Activate();
-            Show();
-        }
-
-        private void About(object sender, System.EventArgs e)
-        {
-            MessageBox.Show("www.panaroma.com.tr", "www.mrcyazilim.com");
-        }
-
-        private void notifyIcon_Click(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
-                notifyIcon.ShowBalloonTip(1000, "Uygulama Bildirimi !!!", "Uygulama Buradan Çalıştırılamaz...", System.Windows.Forms.ToolTipIcon.Warning);
-            }
-        }
-
-        private void Close(object sender, System.EventArgs e)
-        {
-            notifyIcon.Dispose();
-            if (MessageBox.Show("Yazar kasa ile bağlantınız kesilecek, onaylıyor musunuz?", "Uygulama kapanıyor", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK)
-                return;
-            _pleaseClose = true;
-            Close();
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += new EventHandler(timer3_Tick);
+            timer.Start();
         }
 
         private void CheckLogData()
@@ -226,7 +141,7 @@ namespace Panaroma.Communication.Application
             bool flag;
             Guid guid = Guid.NewGuid();
             Helpers.RegistryHelper.IfNotExistsCashIdThenAdd(guid.ToString(), out flag);
-            if (!flag)
+            if(!flag)
             {
                 return;
             }
@@ -245,7 +160,7 @@ namespace Panaroma.Communication.Application
                 {
                     bool flag;
                     Helpers.RegistryHelper.IfNotExistsCashIdThenAdd(Guid.NewGuid().ToString(), out flag);
-                    if (!flag)
+                    if(!flag)
                     {
                         return;
                     }
@@ -257,7 +172,7 @@ namespace Panaroma.Communication.Application
                 _panaromaWebSocketServer.OnMessageChanged +=
                     new WebSocketServer.MessageChanged(Panaroma_OnMessageChanged);
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 _catch(exception);
             }
@@ -271,7 +186,7 @@ namespace Panaroma.Communication.Application
         {
             VisibilityDefaultStatus();
             //Logger.Info("Program kapatılmaya Çalışıldı");
-            if (!_pleaseClose)
+            if(!_pleaseClose)
             {
                 Dispatcher.BeginInvoke(
                     new Action(() => (new NotificationWindow(NotificationType.Information, "Uyarı",
@@ -289,7 +204,7 @@ namespace Panaroma.Communication.Application
 
         private void TetxtBlockSuccess_OnMouseLeave(object sender, MouseEventArgs e)
         {
-            if (!_isSuccessMouseDown)
+            if(!_isSuccessMouseDown)
             {
                 StackPanelSuccessLine.Background = Brushes.Transparent;
             }
@@ -302,7 +217,7 @@ namespace Panaroma.Communication.Application
 
         private void TextBlockError_OnMouseLeave(object sender, MouseEventArgs e)
         {
-            if (!_isErrorMouseDown)
+            if(!_isErrorMouseDown)
             {
                 StackPanelErrorLine.Background = Brushes.Transparent;
             }
@@ -315,55 +230,75 @@ namespace Panaroma.Communication.Application
 
         private void TextBlockWarning_OnMouseLeave(object sender, MouseEventArgs e)
         {
-            if (!_isWarningMouseDown)
+            if(!_isWarningMouseDown)
             {
                 StackPanelWarningLine.Background = Brushes.Transparent;
             }
         }
 
-        private string eskiDeger = null;
+        private string oldValue = null;
 
         private void timer3_Tick(object sender, EventArgs e)
         {
-            string t = Clipboard.GetText();
-            if (String.IsNullOrWhiteSpace(t))
-                return;
-            if (t == eskiDeger)
-                return;
-            eskiDeger = t;
-            if (t == okccmd)
-                return;
-            if (t.IndexOf(okccmd) == -1)
-                return;
-            t = t.Substring(okccmd.Length);
             try
             {
-                try
+                string t = Win32ClipboardAPI.GetText();
+                //string t = Clipboard.GetText().Trim();
+                bool b = t.StartsWith("#okccmd#");
+                if(String.IsNullOrWhiteSpace(t))
+                    return;
+                if(t == oldValue)
+                    return;
+                oldValue = t;
+                if(t == okccmd)
+                    return;
+
+                if(t.IndexOf(okccmd) == -1)
+                    return;
+                t = t.Substring(okccmd.Length);
+                if(b == true)
                 {
-                    (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
-                    string str =
-                        PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
-                            .GetInternalCommunication());
-                    setClipboard(str);
-                    if (InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
+                    try
                     {
-                        AddLogToGrid(str);
+                        try
+                        {
+                            (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
+                            string str =
+                                PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
+                                    .GetInternalCommunication());
+                            Win32ClipboardAPI.SetText(str);
+                            if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
+                            {
+                                AddLogToGrid(str);
+                            }
+                        }
+                        catch(Exception exception)
+                        {
+                            _catch(exception);
+                        }
+                    }
+                    finally
+                    {
+                        _finally();
                     }
                 }
-                catch (Exception exception)
+                else
                 {
-                    _catch(exception);
+                    Dispatcher.BeginInvoke(
+            new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
+                    "Gönderilen format doğru başlamadı. Komut tag #okccmd# ile başlamalı Kontrol ediniz. !!!", Helpers.DateTimeHelper.GetDateTime()))
+                .Build().Show()), Array.Empty<object>());
                 }
             }
-            finally
+            catch(Exception ex)
             {
-                _finally();
+                lblVersionInfo.Content = "Clipboard Açılamadı...";
             }
         }
 
         private void Panaroma_OnMessageChanged(WebSocketEventArgs e)
         {
-            if (string.IsNullOrEmpty(e.Message))
+            if(string.IsNullOrEmpty(e.Message))
             {
                 return;
             }
@@ -377,12 +312,12 @@ namespace Panaroma.Communication.Application
                         PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
                             .GetInternalCommunication());
                     _panaromaWebSocketServer.SendMessage(str);
-                    if (InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
+                    if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
                     {
                         AddLogToGrid(e.Message);
                     }
                 }
-                catch (Exception exception)
+                catch(Exception exception)
                 {
                     _catch(exception);
                 }
@@ -427,7 +362,7 @@ namespace Panaroma.Communication.Application
                 Binding = new Binding("Time")
             });
             DataGrid darkSeaGreen = dataGrid;
-            switch (dataGridType)
+            switch(dataGridType)
             {
                 case DataGridType.Success:
                     {
@@ -476,19 +411,19 @@ namespace Panaroma.Communication.Application
 
         private void AddLogToGrid(string message = null)
         {
-            foreach (NotificationWindows notificationWindowse in InternalCommunication.GetInternalCommunication()
+            foreach(NotificationWindows notificationWindowse in InternalCommunication.GetInternalCommunication()
                 .NotificationWindowses)
             {
                 NotificationWindows notificationWindow = notificationWindowse;
                 notificationWindow.Description = string.Concat(notificationWindow.Description, "   ", message);
                 Dispatcher.Invoke(() =>
                 {
-                    switch (notificationWindowse.NotificationType)
+                    switch(notificationWindowse.NotificationType)
                     {
                         case NotificationType.Information:
                         case NotificationType.Default:
                             {
-                                if (InternalCommunication.GetInternalCommunication().ShowDesktop)
+                                if(InternalCommunication.GetInternalCommunication().ShowDesktop)
                                 {
                                     (new NotificationWindow(notificationWindowse.NotificationType,
                                         notificationWindowse.Header, notificationWindowse.Description,
@@ -505,7 +440,7 @@ namespace Panaroma.Communication.Application
                                     Description = notificationWindowse.Description,
                                     Time = notificationWindowse.Time
                                 });
-                                if (InternalCommunication.GetInternalCommunication().ShowDesktop)
+                                if(InternalCommunication.GetInternalCommunication().ShowDesktop)
                                 {
                                     (new NotificationWindow(notificationWindowse.NotificationType,
                                         notificationWindowse.Header, notificationWindowse.Description,
@@ -522,7 +457,7 @@ namespace Panaroma.Communication.Application
                                     Description = notificationWindowse.Description,
                                     Time = notificationWindowse.Time
                                 });
-                                if (InternalCommunication.GetInternalCommunication().ShowDesktop)
+                                if(InternalCommunication.GetInternalCommunication().ShowDesktop)
                                 {
                                     (new NotificationWindow(notificationWindowse.NotificationType,
                                         notificationWindowse.Header, notificationWindowse.Description,
@@ -539,7 +474,7 @@ namespace Panaroma.Communication.Application
                                     Description = notificationWindowse.Description,
                                     Time = notificationWindowse.Time
                                 });
-                                if (InternalCommunication.GetInternalCommunication().ShowDesktop)
+                                if(InternalCommunication.GetInternalCommunication().ShowDesktop)
                                 {
                                     (new NotificationWindow(notificationWindowse.NotificationType,
                                         notificationWindowse.Header, notificationWindowse.Description,
@@ -577,12 +512,12 @@ namespace Panaroma.Communication.Application
 
         private static void CheckUpdates()
         {
-            if (Environment.GetCommandLineArgs().Length != 1)
+            if(Environment.GetCommandLineArgs().Length != 1)
             {
                 return;
             }
 
-            if (!File.Exists(Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName,
+            if(!File.Exists(Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName,
                     "ApplicationUpdater.exe")) || ConfigurationManager.AppSettings["UpdateFileAddress"] == null)
             {
                 return;
@@ -619,7 +554,7 @@ namespace Panaroma.Communication.Application
             StackPanelSuccessLine.Background = Brushes.DarkSeaGreen;
             StackPanelErrorLine.Background = Brushes.Transparent;
             StackPanelWarningLine.Background = Brushes.Transparent;
-            if (GridDataGridviewContent.Children.Count > 0)
+            if(GridDataGridviewContent.Children.Count > 0)
             {
                 GridDataGridviewContent.Children.Clear();
             }
@@ -635,7 +570,7 @@ namespace Panaroma.Communication.Application
             StackPanelErrorLine.Background = Brushes.Brown;
             StackPanelSuccessLine.Background = Brushes.Transparent;
             StackPanelWarningLine.Background = Brushes.Transparent;
-            if (GridDataGridviewContent.Children.Count > 0)
+            if(GridDataGridviewContent.Children.Count > 0)
             {
                 GridDataGridviewContent.Children.Clear();
             }
@@ -651,7 +586,7 @@ namespace Panaroma.Communication.Application
             StackPanelWarningLine.Background = Brushes.DarkSalmon;
             StackPanelErrorLine.Background = Brushes.Transparent;
             StackPanelSuccessLine.Background = Brushes.Transparent;
-            if (GridDataGridviewContent.Children.Count > 0)
+            if(GridDataGridviewContent.Children.Count > 0)
             {
                 GridDataGridviewContent.Children.Clear();
             }
@@ -693,7 +628,7 @@ namespace Panaroma.Communication.Application
         private void Exit_OnClick(object sender, RoutedEventArgs e)
         {
             VisibilityDefaultStatus();
-            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle,
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
                 new Action(delegate () { _passworBox.Focus(); }));
             _label.Content = "Şifre:";
             _passworBox.ToolTip = "Vazgeçmek için ESC tuşuna basın.";
@@ -707,11 +642,11 @@ namespace Panaroma.Communication.Application
         private void PasswordBoxOnKeyDownHandler(object sender, KeyEventArgs e)
         {
             string pwd = ConfigurationManager.AppSettings["Password"];
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
-                if (pwd == _passworBox.Password)
+                if(pwd == _passworBox.Password)
                 {
-                    if (MessageBox.Show("Yazar kasa ile bağlantınız kesilecek, onaylıyor musunuz?",
+                    if(MessageBox.Show("Yazar kasa ile bağlantınız kesilecek, onaylıyor musunuz?",
                             "Uygulama kapanıyor", MessageBoxButton.OKCancel, MessageBoxImage.Question) !=
                         MessageBoxResult.OK)
                     {
@@ -733,7 +668,7 @@ namespace Panaroma.Communication.Application
                 }
                 else
                 {
-                    if (count != Convert.ToInt16(ConfigurationManager.AppSettings["PasswordHak"]))
+                    if(count != Convert.ToInt16(ConfigurationManager.AppSettings["PasswordHak"]))
                     {
                         count++;
                         Dispatcher.BeginInvoke(
@@ -752,7 +687,7 @@ namespace Panaroma.Communication.Application
                     }
                 }
             }
-            else if (e.Key == Key.Escape)
+            else if(e.Key == Key.Escape)
             {
                 VisibilityDefaultStatus();
                 return;
@@ -775,11 +710,11 @@ namespace Panaroma.Communication.Application
 
         private void NotificationOnKeyDownHandler(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
-                if (_textBox.Text != ConfigurationManager.AppSettings["BildirimSuresi"])
+                if(_textBox.Text != ConfigurationManager.AppSettings["BildirimSuresi"])
                 {
-                    if (MessageBox.Show(_textBox.Text + ": Bildirim süresi değiştirilsin mi?",
+                    if(MessageBox.Show(_textBox.Text + ": Bildirim süresi değiştirilsin mi?",
                             "Bildirim Süresi Değişikliği",
                             MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK)
                     {
@@ -811,7 +746,7 @@ namespace Panaroma.Communication.Application
                     return;
                 }
             }
-            else if (e.Key == Key.Escape)
+            else if(e.Key == Key.Escape)
             {
                 VisibilityDefaultStatus();
                 return;
@@ -834,11 +769,11 @@ namespace Panaroma.Communication.Application
 
         private void ComChangeOnKeyDownHandler(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
-                if (_comChange.Text != ConfigurationManager.AppSettings["OKCCOMPort"])
+                if(_comChange.Text != ConfigurationManager.AppSettings["OKCCOMPort"])
                 {
-                    if (MessageBox.Show(_comChange.Text + " olarak değiştirilecek onaylıyormusunuz ?",
+                    if(MessageBox.Show(_comChange.Text + " olarak değiştirilecek onaylıyormusunuz ?",
                             "Com bilgisi değişikliği", MessageBoxButton.OKCancel, MessageBoxImage.Question) !=
                         MessageBoxResult.OK)
                     {
@@ -874,7 +809,7 @@ namespace Panaroma.Communication.Application
                     return;
                 }
             }
-            else if (e.Key == Key.Escape)
+            else if(e.Key == Key.Escape)
             {
                 VisibilityDefaultStatus();
                 return;
@@ -897,11 +832,11 @@ namespace Panaroma.Communication.Application
 
         private void ConnectionTypeOnKeyDownHandler(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
-                if (_connectionType.Text != ConfigurationManager.AppSettings["OKCConnectionType"])
+                if(_connectionType.Text != ConfigurationManager.AppSettings["OKCConnectionType"])
                 {
-                    if (MessageBox.Show(_connectionType.Text + " olarak değiştirilecek onaylıyormusunuz ?",
+                    if(MessageBox.Show(_connectionType.Text + " olarak değiştirilecek onaylıyormusunuz ?",
                             "ConnectionType=1-COM : 2-Ethernet ", MessageBoxButton.OKCancel,
                             MessageBoxImage.Question) != MessageBoxResult.OK)
                     {
@@ -933,7 +868,7 @@ namespace Panaroma.Communication.Application
                     return;
                 }
             }
-            else if (e.Key == Key.Escape)
+            else if(e.Key == Key.Escape)
             {
                 VisibilityDefaultStatus();
                 return;
@@ -954,7 +889,7 @@ namespace Panaroma.Communication.Application
 
         private void AppConfigOnKeyDownHandler(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
+            if(e.Key == Key.Escape)
             {
                 VisibilityDefaultStatus();
                 return;
@@ -977,11 +912,11 @@ namespace Panaroma.Communication.Application
 
         private void IpChangeOnKeyDownHandler(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
-                if (_ipChange.Text != ConfigurationManager.AppSettings["OKCIpAddress"])
+                if(_ipChange.Text != ConfigurationManager.AppSettings["OKCIpAddress"])
                 {
-                    if (MessageBox.Show(_ipChange.Text + " olarak değiştirilecek onaylıyormusunuz ?",
+                    if(MessageBox.Show(_ipChange.Text + " olarak değiştirilecek onaylıyormusunuz ?",
                             "IP bilgisi değişikliği", MessageBoxButton.OKCancel, MessageBoxImage.Question) !=
                         MessageBoxResult.OK)
                     {
@@ -1017,7 +952,7 @@ namespace Panaroma.Communication.Application
                     return;
                 }
             }
-            else if (e.Key == Key.Escape)
+            else if(e.Key == Key.Escape)
             {
                 VisibilityDefaultStatus();
                 return;
@@ -1040,11 +975,11 @@ namespace Panaroma.Communication.Application
 
         private void LogChangeOnKeyDownHandler(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
-                if (_logChange.Text != ConfigurationManager.AppSettings["RemoveLogsOldDayLimit"])
+                if(_logChange.Text != ConfigurationManager.AppSettings["RemoveLogsOldDayLimit"])
                 {
-                    if (MessageBox.Show(_logChange.Text + " olarak değiştirilecek onaylıyormusunuz ?",
+                    if(MessageBox.Show(_logChange.Text + " olarak değiştirilecek onaylıyormusunuz ?",
                             "Log süresi bilgisi değişikliği", MessageBoxButton.OKCancel, MessageBoxImage.Question) !=
                         MessageBoxResult.OK)
                     {
@@ -1081,103 +1016,27 @@ namespace Panaroma.Communication.Application
                     return;
                 }
             }
-            else if (e.Key == Key.Escape)
+            else if(e.Key == Key.Escape)
             {
                 VisibilityDefaultStatus();
                 return;
             }
         }
 
-        private void WebBrowser1_DocumentCompleted(object sender, System.Windows.Forms.WebBrowserDocumentCompletedEventArgs e)
-        {
-            isLoad = true;
-        }
-
-        private string getStatus()
-        {
-            if (!isLoad)
-                return msgNotReady;
-            try
-            {
-                return webBrowser.Document.GetElementById("status").InnerText;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-        }
-
-        private bool isReady()
-        {
-            return getStatus() == msgConOpen;
-        }
-
-        private void sendCmd(string cmd)
-        {
-            if (!isReady())
-                setClipboard(okcres + getStatus());
-            try
-            {
-                System.Windows.Forms.HtmlElement el = webBrowser.Document.GetElementById("cmd");
-                el.SetAttribute("value", cmd);
-                el.RaiseEvent("onChange");
-                webBrowser.Document.GetElementById("response").Focus();
-                timer2.Enabled = true;
-            }
-            catch (Exception ex)
-            {
-                setClipboard(okcres + ex.Message);
-            }
-        }
-
-        private void timer2_Tick(object sender, EventArgs e)
-        {
-            System.Windows.Forms.HtmlElement el = webBrowser.Document.GetElementById("response");
-            string val = el.GetAttribute("value");
-            if (string.IsNullOrWhiteSpace(val))
-                return;
-            timer2.Enabled = false;
-            el.SetAttribute("value", "");
-            setClipboard(val);
-        }
-
         private void setClipboard(string val)
         {
-            while (true)
+            while(true)
             {
                 try
                 {
                     Clipboard.SetText(okcres + val);
                     break;
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     System.Threading.Thread.Sleep(20);
                 }
             }
-        }
-
-        private string oldValue = null;
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            string t = Clipboard.GetText();
-            if (String.IsNullOrWhiteSpace(t))
-                return;
-
-            if (t == oldValue)
-                return;
-            oldValue = t;
-
-            if (t.IndexOf(okccmd) == -1)
-                return;
-
-            t = t.Substring(okccmd.Length);
-
-            if (t.ToLower() == "checkstatus")
-                setClipboard(okcres + getStatus());
-            else
-                sendCmd(t);
         }
     }
 }

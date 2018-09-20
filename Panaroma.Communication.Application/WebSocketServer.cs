@@ -32,7 +32,7 @@ namespace Panaroma.Communication.Application
         public void SendMessage(string message)
         {
             IWebSocketConnection webSocketConnection = _webSocketConnections.LastOrDefault();
-            if (webSocketConnection == null)
+            if(webSocketConnection == null)
             {
                 return;
             }
@@ -43,7 +43,7 @@ namespace Panaroma.Communication.Application
         private void PanaromaWebSocketServer_OnMessageChanged(WebSocketEventArgs e)
         {
             MessageChanged onMessageChanged = OnMessageChanged;
-            if (onMessageChanged == null)
+            if(onMessageChanged == null)
                 return;
             onMessageChanged(e);
         }

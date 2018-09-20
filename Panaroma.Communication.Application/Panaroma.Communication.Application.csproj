@@ -76,11 +76,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BrowserEmulationVersion.cs" />
+    <Compile Include="DataHelper.cs" />
     <Compile Include="FileWorker.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="InternalCommunication.cs" />
-    <Compile Include="InternetExplorerBrowserEmulation.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>mainwindow.xaml</DependentUpon>
@@ -97,6 +96,8 @@
     <Compile Include="ProcessWorker.cs" />
     <Compile Include="PublicCommunication.cs" />
     <Compile Include="TcpCommand.cs" />
+    <Compile Include="Win32ClipboardAPI.cs" />
+    <Compile Include="Win32MemoryAPI.cs" />
     <Compile Include="Worker.cs" />
     <Compile Include="WorkerExceptionHandle.cs" />
     <Compile Include="App.xaml.cs">
