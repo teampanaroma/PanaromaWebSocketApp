@@ -76,6 +76,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ClipboardManager.cs" />
     <Compile Include="DataHelper.cs" />
     <Compile Include="FileWorker.cs" />
     <Compile Include="Helpers.cs" />

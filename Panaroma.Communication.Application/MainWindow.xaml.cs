@@ -31,9 +31,9 @@ namespace Panaroma.Communication.Application
         private int count = 0;
         private string okccmd = "#okccmd#";
         private string okcres = "#okcres#";
-
         public MainWindow()
         {
+            #region ProcessTypeWebSocket
             if(ConfigurationManager.AppSettings["ProcessType"] == "1")
             {
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "WebSocket";
@@ -46,6 +46,9 @@ namespace Panaroma.Communication.Application
                 _dataGridError = GetDefaultDataGrid(DataGridType.Error);
                 Loaded += new RoutedEventHandler(MainWindow_Loaded);
             }
+            #endregion
+
+            #region ProcessTypeClipBoard
             else if(ConfigurationManager.AppSettings["ProcessType"] == "2")
             {
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "ClipBoard";
@@ -56,10 +59,11 @@ namespace Panaroma.Communication.Application
                 _dataGridWarning = GetDefaultDataGrid(DataGridType.Warning);
                 _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
                 _dataGridError = GetDefaultDataGrid(DataGridType.Error);
-                timerDefaultValues();
-
 
             }
+            #endregion
+
+            #region ProcessTypeNone
             else
             {
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "None";
@@ -75,6 +79,76 @@ namespace Panaroma.Communication.Application
                     new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
                             "Program şu anda hiç bir şekilde etkileşimde değil  !!!", Helpers.DateTimeHelper.GetDateTime()))
                         .Build().Show()), Array.Empty<object>());
+            }
+            #endregion
+        }
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+
+            // Initialize the clipboard now that we have a window soruce to use
+            var windowClipboardManager = new ClipboardManager(this);
+            windowClipboardManager.ClipboardChanged += ClipboardChanged;
+        }
+        private void ClipboardChanged(object sender, EventArgs e)
+        {
+            // Handle your clipboard update here, debug logging example:
+            if(Clipboard.ContainsText())
+            {
+                try
+                {
+                    string t = Win32ClipboardAPI.GetText();
+                    //string t = Clipboard.GetText().Trim();
+                    bool b = t.StartsWith("#okccmd#");
+                    if(String.IsNullOrWhiteSpace(t))
+                        return;
+                    if(t == oldValue)
+                        return;
+                    oldValue = t;
+                    if(t == okccmd)
+                        return;
+
+                    if(t.IndexOf(okccmd) == -1)
+                        return;
+                    t = t.Substring(okccmd.Length);
+                    if(b == true)
+                    {
+                        try
+                        {
+                            try
+                            {
+                                (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
+                                string str =
+                                    PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
+                                        .GetInternalCommunication());
+                                Win32ClipboardAPI.SetText(okcres + str);
+                                if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
+                                {
+                                    AddLogToGrid(str);
+                                }
+                            }
+                            catch(Exception exception)
+                            {
+                                _catch(exception);
+                            }
+                        }
+                        finally
+                        {
+                            _finally();
+                        }
+                    }
+                    else
+                    {
+                        Dispatcher.BeginInvoke(
+                new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
+                        "Gönderilen format doğru başlamadı. Komut tag #okccmd# ile başlamalı Kontrol ediniz. !!!", Helpers.DateTimeHelper.GetDateTime()))
+                    .Build().Show()), Array.Empty<object>());
+                    }
+                }
+                catch(Exception ex)
+                {
+                    lblVersionInfo.Content = "Clipboard Açılamadı...";
+                }
             }
         }
 
@@ -92,8 +166,7 @@ namespace Panaroma.Communication.Application
         private void timerDefaultValues()
         {
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += new EventHandler(timer3_Tick);
+            timer.Interval = TimeSpan.FromSeconds(2);
             timer.Start();
         }
 
@@ -266,7 +339,7 @@ namespace Panaroma.Communication.Application
                             string str =
                                 PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
                                     .GetInternalCommunication());
-                            Win32ClipboardAPI.SetText(str);
+                            Win32ClipboardAPI.SetText(okcres+str);
                             if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
                             {
                                 AddLogToGrid(str);

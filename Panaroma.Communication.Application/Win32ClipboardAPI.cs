@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Interop;
 
 namespace Panaroma.Communication.Application
 {
@@ -30,20 +31,6 @@ namespace Panaroma.Communication.Application
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CloseClipboard();
 
-        [DllImport("user32.dll")]
-        public static extern uint EnumClipboardFormats(uint format);
-
-        [DllImport("user32.dll")]
-        public static extern int GetClipboardFormatName(uint format, [Out] StringBuilder lpszFormatName, int cchMaxCount);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern uint RegisterClipboardFormat(string lpszFormat);
-        [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SetClipboardViewer(IntPtr hWnd);
-        [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern bool ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
         private const uint CF_TEXT = 1U;
         private const uint CF_BITMAP = 2U;
         private const uint CF_UNICODETEXT = 13U;
@@ -142,4 +129,5 @@ namespace Panaroma.Communication.Application
             }
         }
     }
+
 }
