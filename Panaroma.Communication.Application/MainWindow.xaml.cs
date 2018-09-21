@@ -19,7 +19,6 @@ namespace Panaroma.Communication.Application
 {
     public partial class MainWindow : Window, IComponentConnector
     {
-        private DispatcherTimer timer;
         private WebSocketServer _panaromaWebSocketServer;
         private bool _isSuccessMouseDown;
         private bool _isErrorMouseDown;
@@ -147,7 +146,7 @@ namespace Panaroma.Communication.Application
                 }
                 catch(Exception ex)
                 {
-                    lblVersionInfo.Content = "Clipboard Açılamadı...";
+                    lblVersionInfo.Content = "Clipboard Açılamadı..."+ex.Data;
                 }
             }
         }
@@ -162,14 +161,6 @@ namespace Panaroma.Communication.Application
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ToolTip = "Bu Program WebSocket teknolojisi veya ClipBoard ile haberleşme yapar. Yalnızca Json Formatı ile habeleşme kurar.";
         }
-
-        private void timerDefaultValues()
-        {
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(2);
-            timer.Start();
-        }
-
         private void CheckLogData()
         {
             Helpers.FileHelper.RemoveOldLogFiles(
@@ -310,64 +301,6 @@ namespace Panaroma.Communication.Application
         }
 
         private string oldValue = null;
-
-        private void timer3_Tick(object sender, EventArgs e)
-        {
-            try
-            {
-                string t = Win32ClipboardAPI.GetText();
-                //string t = Clipboard.GetText().Trim();
-                bool b = t.StartsWith("#okccmd#");
-                if(String.IsNullOrWhiteSpace(t))
-                    return;
-                if(t == oldValue)
-                    return;
-                oldValue = t;
-                if(t == okccmd)
-                    return;
-
-                if(t.IndexOf(okccmd) == -1)
-                    return;
-                t = t.Substring(okccmd.Length);
-                if(b == true)
-                {
-                    try
-                    {
-                        try
-                        {
-                            (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
-                            string str =
-                                PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
-                                    .GetInternalCommunication());
-                            Win32ClipboardAPI.SetText(okcres+str);
-                            if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
-                            {
-                                AddLogToGrid(str);
-                            }
-                        }
-                        catch(Exception exception)
-                        {
-                            _catch(exception);
-                        }
-                    }
-                    finally
-                    {
-                        _finally();
-                    }
-                }
-                else
-                {
-                    Dispatcher.BeginInvoke(
-            new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
-                    "Gönderilen format doğru başlamadı. Komut tag #okccmd# ile başlamalı Kontrol ediniz. !!!", Helpers.DateTimeHelper.GetDateTime()))
-                .Build().Show()), Array.Empty<object>());
-                }
-            }
-            catch(Exception ex)
-            {
-                lblVersionInfo.Content = "Clipboard Açılamadı...";
-            }
-        }
 
         private void Panaroma_OnMessageChanged(WebSocketEventArgs e)
         {
@@ -1093,22 +1026,6 @@ namespace Panaroma.Communication.Application
             {
                 VisibilityDefaultStatus();
                 return;
-            }
-        }
-
-        private void setClipboard(string val)
-        {
-            while(true)
-            {
-                try
-                {
-                    Clipboard.SetText(okcres + val);
-                    break;
-                }
-                catch(Exception ex)
-                {
-                    System.Threading.Thread.Sleep(20);
-                }
             }
         }
     }
