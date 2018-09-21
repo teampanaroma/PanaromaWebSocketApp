@@ -30,9 +30,11 @@ namespace Panaroma.Communication.Application
         private int count = 0;
         private string okccmd = "#okccmd#";
         private string okcres = "#okcres#";
+
         public MainWindow()
         {
             #region ProcessTypeWebSocket
+
             if(ConfigurationManager.AppSettings["ProcessType"] == "1")
             {
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "WebSocket";
@@ -45,9 +47,11 @@ namespace Panaroma.Communication.Application
                 _dataGridError = GetDefaultDataGrid(DataGridType.Error);
                 Loaded += new RoutedEventHandler(MainWindow_Loaded);
             }
-            #endregion
+
+            #endregion ProcessTypeWebSocket
 
             #region ProcessTypeClipBoard
+
             else if(ConfigurationManager.AppSettings["ProcessType"] == "2")
             {
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "ClipBoard";
@@ -58,11 +62,12 @@ namespace Panaroma.Communication.Application
                 _dataGridWarning = GetDefaultDataGrid(DataGridType.Warning);
                 _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
                 _dataGridError = GetDefaultDataGrid(DataGridType.Error);
-
             }
-            #endregion
+
+            #endregion ProcessTypeClipBoard
 
             #region ProcessTypeNone
+
             else
             {
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "None";
@@ -79,74 +84,86 @@ namespace Panaroma.Communication.Application
                             "Program şu anda hiç bir şekilde etkileşimde değil  !!!", Helpers.DateTimeHelper.GetDateTime()))
                         .Build().Show()), Array.Empty<object>());
             }
-            #endregion
+
+            #endregion ProcessTypeNone
         }
+
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
 
-            // Initialize the clipboard now that we have a window soruce to use
             var windowClipboardManager = new ClipboardManager(this);
             windowClipboardManager.ClipboardChanged += ClipboardChanged;
         }
+
         private void ClipboardChanged(object sender, EventArgs e)
         {
-            // Handle your clipboard update here, debug logging example:
             if(Clipboard.ContainsText())
             {
                 try
                 {
-                    string t = Win32ClipboardAPI.GetText();
-                    //string t = Clipboard.GetText().Trim();
-                    bool b = t.StartsWith("#okccmd#");
-                    if(String.IsNullOrWhiteSpace(t))
-                        return;
-                    if(t == oldValue)
-                        return;
-                    oldValue = t;
-                    if(t == okccmd)
-                        return;
-
-                    if(t.IndexOf(okccmd) == -1)
-                        return;
-                    t = t.Substring(okccmd.Length);
-                    if(b == true)
+                    string t = Win32ClipboardAPI.GetText().Trim();
+                    bool request = t.StartsWith("#okccmd#");
+                    bool response = t.StartsWith("#okcres#");
+                    if(!response == true)
                     {
-                        try
+                        if(request == true)
                         {
+                            if(String.IsNullOrWhiteSpace(t))
+                                return;
+                            if(t == oldValue)
+                                return;
+                            oldValue = t;
+                            if(t == okccmd)
+                                return;
+
+                            if(t.IndexOf(okccmd) == -1)
+                                return;
+                            t = t.Substring(okccmd.Length);
+
                             try
                             {
-                                (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
-                                string str =
-                                    PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
-                                        .GetInternalCommunication());
-                                Win32ClipboardAPI.SetText(okcres + str);
-                                if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
+                                try
                                 {
-                                    AddLogToGrid(str);
+                                    (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
+                                    string str =
+                                        PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
+                                            .GetInternalCommunication());
+                                    Win32ClipboardAPI.SetText(okcres + str);
+                                    if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
+                                    {
+                                        AddLogToGrid(str);
+                                    }
+                                }
+                                catch(Exception exception)
+                                {
+                                    _catch(exception);
                                 }
                             }
-                            catch(Exception exception)
+                            finally
                             {
-                                _catch(exception);
+                                _finally();
                             }
                         }
-                        finally
+                        else
                         {
-                            _finally();
+                            Dispatcher.BeginInvoke(
+                            new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
+                            "Gönderilen format doğru başlamadı. Komut tag #okccmd# ile başlamalı Kontrol ediniz. !!!", Helpers.DateTimeHelper.GetDateTime()))
+                            .Build().Show()), Array.Empty<object>());
                         }
                     }
                     else
                     {
                         Dispatcher.BeginInvoke(
-                new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
-                        "Gönderilen format doğru başlamadı. Komut tag #okccmd# ile başlamalı Kontrol ediniz. !!!", Helpers.DateTimeHelper.GetDateTime()))
-                    .Build().Show()), Array.Empty<object>());
+                        new Action(() => (new NotificationWindow(NotificationType.Information, "Info ",
+                         "Mesaj Cevabı Yazıldı...", Helpers.DateTimeHelper.GetDateTime()))
+                        .Build().Show()), Array.Empty<object>());
                     }
                 }
                 catch(Exception ex)
                 {
-                    lblVersionInfo.Content = "Clipboard Açılamadı..."+ex.Data;
+                    lblVersionInfo.Content = "Clipboard Açılamadı..." + ex.Data;
                 }
             }
         }
@@ -161,6 +178,7 @@ namespace Panaroma.Communication.Application
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ToolTip = "Bu Program WebSocket teknolojisi veya ClipBoard ile haberleşme yapar. Yalnızca Json Formatı ile habeleşme kurar.";
         }
+
         private void CheckLogData()
         {
             Helpers.FileHelper.RemoveOldLogFiles(
