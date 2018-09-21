@@ -112,13 +112,34 @@ namespace Panaroma.Communication.Application
                             if(String.IsNullOrWhiteSpace(t))
                                 return;
                             if(t == oldValue)
-                                return;
+                            {
+                                if(MessageBox.Show("Aynı Komutu tekrar yürütmek istediğinize eminmisiniz ?",
+                                        "Uyarı", MessageBoxButton.OKCancel, MessageBoxImage.Question) !=
+                                    MessageBoxResult.OK)
+                                {
+                                    return;
+                                }
+                            }
                             oldValue = t;
                             if(t == okccmd)
+                            {
+                                Dispatcher.BeginInvoke(
+                                 new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
+                                "Yalnızca tag gönderilemez !!!", Helpers.DateTimeHelper.GetDateTime()))
+                                .Build().Show()), Array.Empty<object>());
                                 return;
+                            }
+                                
 
                             if(t.IndexOf(okccmd) == -1)
+                            {
+                                Dispatcher.BeginInvoke(
+                                new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
+                                "Tag Bulunamadı !!!", Helpers.DateTimeHelper.GetDateTime()))
+                                .Build().Show()), Array.Empty<object>());
                                 return;
+                            }
+
                             t = t.Substring(okccmd.Length);
 
                             try
