@@ -7,10 +7,10 @@ namespace Panaroma.OKC.Integration.Library
         public static OKCConfiguration Build(IConfiguration configuration)
         {
             string name = configuration.GetType().Name;
-            if (name == "COMConfiguration")
+            if(name == "COMConfiguration")
                 return new OKCConfiguration(ConnectionType.COM, configuration.GetConfiguration<COMConfiguration>(),
                     null);
-            if (name == "EthernetConfiguration")
+            if(name == "EthernetConfiguration")
                 return new OKCConfiguration(ConnectionType.TCP_IP, null,
                     configuration.GetConfiguration<EthernetConfiguration>());
             throw new NotSupportedException();

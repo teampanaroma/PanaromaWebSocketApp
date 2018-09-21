@@ -4,7 +4,6 @@
     {
         public string TerminalSerialNum { get; set; }
         public Installedsoftware[] InstalledSoftwares { get; set; }
-
     }
 
     public class Installedsoftware

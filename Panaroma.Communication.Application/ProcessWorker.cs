@@ -13,13 +13,13 @@ namespace Panaroma.Communication.Application
         public void DoWork()
         {
             string type = TcpCommand.Type;
-            if (type == "PrintToImage" || type == "PrintToDos")
+            if(type == "PrintToImage" || type == "PrintToDos")
             {
                 (new PrinterWorker(TcpCommand)).DoWork();
                 return;
             }
 
-            if (type == "LocalPrinters")
+            if(type == "LocalPrinters")
             {
                 IEnumerable<Printer> printers = Helpers.PrinterHelper.GetPrinters();
                 InternalCommunication.GetInternalCommunication().IsSuccess = true;
@@ -27,13 +27,13 @@ namespace Panaroma.Communication.Application
                 return;
             }
 
-            if (type == "Sales")
+            if(type == "Sales")
             {
                 (new OKCWorker(TcpCommand)).DoWork();
                 return;
             }
 
-            if (type == "LocalCashId")
+            if(type == "LocalCashId")
             {
                 string cashId = Helpers.RegistryHelper.GetCashId();
                 InternalCommunication.GetInternalCommunication().IsSuccess = true;
@@ -41,13 +41,13 @@ namespace Panaroma.Communication.Application
                 return;
             }
 
-            if (type == "Restart")
+            if(type == "Restart")
             {
                 App.AllowMultipleApplication(true);
                 return;
             }
 
-            if (!(type == "SaveFile") && !(type == "GetFile"))
+            if(!(type == "SaveFile") && !(type == "GetFile"))
             {
                 throw new NotSupportedException();
             }

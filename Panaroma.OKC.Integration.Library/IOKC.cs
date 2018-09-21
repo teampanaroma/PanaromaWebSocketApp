@@ -122,6 +122,7 @@ namespace Panaroma.OKC.Integration.Library
         OKC TryInfoInquiryResponse(Members requestMembers);
 
         OKC TryGetOKCStatus();
+
         OKC TryGetUniqueId();
 
         void TrySetLogStat(string path = null);

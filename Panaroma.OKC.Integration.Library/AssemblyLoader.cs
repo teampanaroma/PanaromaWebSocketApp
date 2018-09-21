@@ -13,7 +13,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public AssemblyLoader(string path)
         {
-            if (string.IsNullOrEmpty(path) || string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            if(string.IsNullOrEmpty(path) || string.IsNullOrWhiteSpace(path) || !File.Exists(path))
             {
                 throw new ArgumentNullException("path", "Assembly bulunamadı.");
             }
@@ -22,7 +22,7 @@ namespace Panaroma.OKC.Integration.Library
             {
                 _assembly = Assembly.LoadFile(path);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw new Exception("Assembly yüklenirken hata oluştu.", ex);
             }
@@ -30,7 +30,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public AssemblyLoader(byte[] rawAssembly)
         {
-            if (rawAssembly == null || rawAssembly.Length < 1)
+            if(rawAssembly == null || rawAssembly.Length < 1)
             {
                 throw new ArgumentNullException("rawAssembly", "Assembly bulunamadı.");
             }
@@ -39,7 +39,7 @@ namespace Panaroma.OKC.Integration.Library
             {
                 _assembly = Assembly.Load(rawAssembly);
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 throw new Exception("Assembly yüklenirken hata oluştu.", exception);
             }
@@ -47,7 +47,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public AssemblyLoader GetClass(string className, object[] constructorParameters)
         {
-            if (string.IsNullOrEmpty(className) || string.IsNullOrWhiteSpace(className))
+            if(string.IsNullOrEmpty(className) || string.IsNullOrWhiteSpace(className))
             {
                 throw new ArgumentNullException("className", "Class ismi boş olamaz.");
             }
@@ -57,7 +57,7 @@ namespace Panaroma.OKC.Integration.Library
                 _type = _assembly.GetType(string.Concat("Panaroma.OKC.Integration.Library.", className), true, true);
                 _class = Activator.CreateInstance(_type, constructorParameters);
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 throw new Exception("Assembly yüklenirken hata oluştu.", exception);
             }
@@ -67,7 +67,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public AssemblyLoader GetClass(string className)
         {
-            if (string.IsNullOrEmpty(className) || string.IsNullOrWhiteSpace(className))
+            if(string.IsNullOrEmpty(className) || string.IsNullOrWhiteSpace(className))
             {
                 throw new ArgumentNullException("className", "Class ismi boş olamaz.");
             }
@@ -77,7 +77,7 @@ namespace Panaroma.OKC.Integration.Library
                 _type = _assembly.GetType(string.Concat("Panaroma.OKC.Integration.Library.", className), true, true);
                 _class = Activator.CreateInstance(_type);
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 throw new Exception("Assembly yüklenirken hata oluştu.", exception);
             }
@@ -88,7 +88,7 @@ namespace Panaroma.OKC.Integration.Library
         public object InvokeMethod(string methodName, Type[] methodParamTypes, object[] methodParams)
         {
             object obj;
-            if (string.IsNullOrEmpty(methodName) || string.IsNullOrWhiteSpace(methodName))
+            if(string.IsNullOrEmpty(methodName) || string.IsNullOrWhiteSpace(methodName))
             {
                 throw new ArgumentNullException("methodName", "method ismi boş olamaz.");
             }
@@ -98,7 +98,7 @@ namespace Panaroma.OKC.Integration.Library
                 _methodInfo = _type.GetMethod(methodName, methodParamTypes);
                 obj = _methodInfo.Invoke(_class, methodParams);
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 throw new Exception("GetMethod çağrılırken hata oluştu.", exception);
             }
@@ -109,7 +109,7 @@ namespace Panaroma.OKC.Integration.Library
         public object InvokeMethod(string methodName)
         {
             object obj;
-            if (string.IsNullOrEmpty(methodName) || string.IsNullOrWhiteSpace(methodName))
+            if(string.IsNullOrEmpty(methodName) || string.IsNullOrWhiteSpace(methodName))
             {
                 throw new ArgumentNullException("methodName", "method ismi boş olamaz.");
             }
@@ -119,7 +119,7 @@ namespace Panaroma.OKC.Integration.Library
                 _methodInfo = _type.GetMethod(methodName);
                 obj = _methodInfo.Invoke(_class, null);
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 throw new Exception("GetMethod çağrılırken hata oluştu.", exception);
             }

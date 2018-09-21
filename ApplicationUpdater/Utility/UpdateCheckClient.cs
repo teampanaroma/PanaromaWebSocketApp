@@ -24,21 +24,19 @@ namespace Alfa.Windows.ApplicationUpdater
 
             var json = new JavaScriptSerializer().Serialize(updateRequestDTO);
 
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            using(var streamWriter = new StreamWriter(request.GetRequestStream()))
             {
                 streamWriter.Write(json);
                 streamWriter.Flush();
                 streamWriter.Close();
             }
 
-            var httpResponse = (HttpWebResponse) request.GetResponse();
+            var httpResponse = (HttpWebResponse)request.GetResponse();
             UpdateResponseDTO result;
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            using(var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
-
                 //var result = streamReader.ReadToEnd();
                 result = new JavaScriptSerializer().Deserialize<UpdateResponseDTO>(streamReader.ReadToEnd());
-
             }
 
             return result;
@@ -54,12 +52,12 @@ namespace Alfa.Windows.ApplicationUpdater
         public static byte[] downloadUpdate(string downloadUrl, string tmpPath)
         {
             byte[] getbytes;
-            if (File.Exists(tmpPath))
+            if(File.Exists(tmpPath))
             {
                 File.Delete(tmpPath);
             }
 
-            using (var client = new WebClient())
+            using(var client = new WebClient())
             {
                 client.DownloadFile(downloadUrl, tmpPath);
 
@@ -83,10 +81,9 @@ namespace Alfa.Windows.ApplicationUpdater
             byte[] getbytes;
             try
             {
-
-                if (File.Exists(savePath))
+                if(File.Exists(savePath))
                     File.Delete(savePath);
-                FtpWebRequest request = (FtpWebRequest) WebRequest.Create(url);
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(url);
 
                 request.Method = WebRequestMethods.Ftp.DownloadFile;
 
@@ -94,51 +91,35 @@ namespace Alfa.Windows.ApplicationUpdater
 
                 request.UseBinary = true;
 
-
-
-                using (FtpWebResponse response = (FtpWebResponse) request.GetResponse())
+                using(FtpWebResponse response = (FtpWebResponse)request.GetResponse())
                 {
-
-                    using (Stream rs = response.GetResponseStream())
+                    using(Stream rs = response.GetResponseStream())
 
                     {
-
-                        using (FileStream ws = new FileStream(savePath, FileMode.Create))
+                        using(FileStream ws = new FileStream(savePath, FileMode.Create))
 
                         {
-
                             byte[] buffer = new byte[2048];
 
                             int bytesRead = rs.Read(buffer, 0, buffer.Length);
 
-
-
-                            while (bytesRead > 0)
+                            while(bytesRead > 0)
 
                             {
-
                                 ws.Write(buffer, 0, bytesRead);
 
                                 bytesRead = rs.Read(buffer, 0, buffer.Length);
-
                             }
-
-
-
                         }
-
                     }
-
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Console.WriteLine("Download FTP Error: " + ex.Message);
             }
 
             return getbytes = File.ReadAllBytes(savePath);
-
-
         }
 
         private static bool AcceptAllCertifications(object sender,
@@ -152,7 +133,6 @@ namespace Alfa.Windows.ApplicationUpdater
         public static bool CheckConnection()
         {
             return System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
-
         }
 
         public static IList<FtpInfo> GetFtpUserInformation(string ApiMethod)
@@ -163,19 +143,15 @@ namespace Alfa.Windows.ApplicationUpdater
             request.ContentType = "text/json";
             request.Method = "GET";
 
-
-            var httpResponse = (HttpWebResponse) request.GetResponse();
+            var httpResponse = (HttpWebResponse)request.GetResponse();
             IList<FtpInfo> result;
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            using(var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
-
                 //var result = streamReader.ReadToEnd();
                 result = new JavaScriptSerializer().Deserialize<IList<FtpInfo>>(streamReader.ReadToEnd());
-
             }
 
             return result;
-
         }
     }
 }

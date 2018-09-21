@@ -89,14 +89,17 @@ namespace Panaroma.OKC.Integration.Library
 
         public string AcquirerId
         {
-            get { return _acqurierId; }
+            get
+            {
+                return _acqurierId;
+            }
             set
             {
                 _acqurierId = value;
-                if (string.IsNullOrEmpty(value))
+                if(string.IsNullOrEmpty(value))
                     throw new ArgumentNullException("Banka bilgisi alınamadı.");
                 Bank bank;
-                if (_panaromaSourceBanks.TryGetValue(value, out bank))
+                if(_panaromaSourceBanks.TryGetValue(value, out bank))
                 {
                     Name = bank.Name;
                     Id = bank.Id;

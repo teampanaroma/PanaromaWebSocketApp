@@ -13,7 +13,7 @@ namespace Panaroma.Communication.Application
         public FileWorker(TcpCommand tcpCommand)
             : base(tcpCommand)
         {
-            if (Directory.Exists(_folderpath))
+            if(Directory.Exists(_folderpath))
                 return;
             Directory.CreateDirectory(_folderpath);
         }
@@ -21,7 +21,7 @@ namespace Panaroma.Communication.Application
         public void DoWork()
         {
             FileWorkerParams fileWorkerParams = JsonConvert.DeserializeObject<FileWorkerParams>(TcpCommand.Content);
-            if (fileWorkerParams.FileName.Length.Equals(0))
+            if(fileWorkerParams.FileName.Length.Equals(0))
             {
                 this.setFileResult(false, "Dosya adı boş olamaz.", null);
             }
@@ -29,11 +29,11 @@ namespace Panaroma.Communication.Application
             {
                 string path = Path.Combine(_folderpath, fileWorkerParams.FileName);
                 string header = TcpCommand.Header;
-                if (!(header == "SaveFile"))
+                if(!(header == "SaveFile"))
                 {
-                    if (!(header == "GetFile"))
+                    if(!(header == "GetFile"))
                         return;
-                    if (!File.Exists(path))
+                    if(!File.Exists(path))
                     {
                         this.setFileResult(false,
                             string.Format("{0} isimli dosya bulunamadı.", fileWorkerParams.FileName), null);
@@ -54,7 +54,7 @@ namespace Panaroma.Communication.Application
 
         private static void trySaveFile(string fullfilepath, string content)
         {
-            if (File.Exists(fullfilepath))
+            if(File.Exists(fullfilepath))
                 File.Delete(fullfilepath);
             File.WriteAllText(fullfilepath, content);
         }
@@ -71,7 +71,7 @@ namespace Panaroma.Communication.Application
 
         private void setFileResult(bool result, string message = null, FileWorkerParams fileparams = null)
         {
-            if (result)
+            if(result)
             {
                 InternalCommunication.GetInternalCommunication().IsSuccess = true;
                 InternalCommunication.GetInternalCommunication().Results = fileparams;

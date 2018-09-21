@@ -72,7 +72,6 @@
     [System.Xml.Serialization.XmlType(AnonymousType = true)]
     public partial class AppConfigFwRule
     {
-
         private string ipField;
 
         private string portField;
@@ -114,7 +113,6 @@
     [System.Xml.Serialization.XmlType(AnonymousType = true)]
     public partial class AppConfigTrustedApp
     {
-
         private string nameField;
 
         private string fileNameField;

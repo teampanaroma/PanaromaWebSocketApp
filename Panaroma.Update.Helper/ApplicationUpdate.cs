@@ -18,21 +18,21 @@ namespace Panaroma.Update.Helper
         {
             try
             {
-                if (password == null)
+                if(password == null)
                 {
                     password = "";
                 }
 
                 var fileExt = Path.GetExtension(rarFileName);
-                if (fileExt == ".zip")
+                if(fileExt == ".zip")
                 {
-                    using (ZipArchive archive = ZipFile.OpenRead(rarFileName))
+                    using(ZipArchive archive = ZipFile.OpenRead(rarFileName))
                     {
-                        foreach (ZipArchiveEntry file in archive.Entries)
+                        foreach(ZipArchiveEntry file in archive.Entries)
                         {
                             string completeFileName = Path.Combine(startupPath, file.FullName);
                             Directory.CreateDirectory(Path.GetDirectoryName(completeFileName));
-                            if (Path.GetExtension(completeFileName).Length > 0)
+                            if(Path.GetExtension(completeFileName).Length > 0)
                                 file.ExtractToFile(completeFileName, true);
                         }
                     }
@@ -44,7 +44,7 @@ namespace Panaroma.Update.Helper
                     throw new NotImplementedException("Dosya türü desteklenmiyor");
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Console.WriteLine("Unrar işleminde hata oluştu:" + ex.Message);
                 return false;
@@ -62,7 +62,7 @@ namespace Panaroma.Update.Helper
             try
             {
                 var str2 = Path.Combine(startupPath, exeName);
-                if (File.Exists(str2))
+                if(File.Exists(str2))
                 {
                     Process.Start(str2);
                     return true;
@@ -70,7 +70,7 @@ namespace Panaroma.Update.Helper
 
                 return false;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Console.WriteLine("Start App İşleminde Hata Oluştu :" + ex.Message);
                 return false;

@@ -50,7 +50,7 @@ namespace Panaroma.Communication.Application
         {
             public static BitmapImage GetBitmapImage(string imageName)
             {
-                using (MemoryStream memoryStream = new MemoryStream())
+                using(MemoryStream memoryStream = new MemoryStream())
                 {
                     (new ResourceManager(typeof(Properties.Resources)).GetObject(imageName) as Bitmap)?.Save(
                         memoryStream, ImageFormat.Png);
@@ -105,11 +105,11 @@ namespace Panaroma.Communication.Application
                 try
                 {
                     IntPtr hPrinter;
-                    if (OpenPrinter(szPrinterName.Normalize(), out hPrinter, IntPtr.Zero))
+                    if(OpenPrinter(szPrinterName.Normalize(), out hPrinter, IntPtr.Zero))
                     {
-                        if (StartDocPrinter(hPrinter, 1, di))
+                        if(StartDocPrinter(hPrinter, 1, di))
                         {
-                            if (StartPagePrinter(hPrinter))
+                            if(StartPagePrinter(hPrinter))
                             {
                                 int dwWritten;
                                 flag = WritePrinter(hPrinter, pBytes, dwCount, out dwWritten);
@@ -173,11 +173,14 @@ namespace Panaroma.Communication.Application
             [StructLayout(LayoutKind.Sequential)]
             private class DOCINFOA
             {
-                [MarshalAs(UnmanagedType.LPStr)] public string pDocName;
+                [MarshalAs(UnmanagedType.LPStr)]
+                public string pDocName;
 
-                [MarshalAs(UnmanagedType.LPStr)] public string pOutputFile;
+                [MarshalAs(UnmanagedType.LPStr)]
+                public string pOutputFile;
 
-                [MarshalAs(UnmanagedType.LPStr)] public string pDataType;
+                [MarshalAs(UnmanagedType.LPStr)]
+                public string pDataType;
             }
         }
 
@@ -209,10 +212,10 @@ namespace Panaroma.Communication.Application
                 return new ManagementObjectSearcher("SELECT * from Win32_Printer").Get().Cast<ManagementBaseObject>()
                     .Select(printer => new Printer()
                     {
-                        Name = (string) printer.GetPropertyValue("Name"),
-                        Status = (string) printer.GetPropertyValue("Status"),
-                        IsDefault = (bool) printer.GetPropertyValue("Default"),
-                        IsNetworkPrinter = (bool) printer.GetPropertyValue("Network")
+                        Name = (string)printer.GetPropertyValue("Name"),
+                        Status = (string)printer.GetPropertyValue("Status"),
+                        IsDefault = (bool)printer.GetPropertyValue("Default"),
+                        IsNetworkPrinter = (bool)printer.GetPropertyValue("Network")
                     }).ToList();
             }
 
@@ -224,11 +227,11 @@ namespace Panaroma.Communication.Application
             {
                 try
                 {
-                    using (WebBrowser webBrowser = new WebBrowser())
+                    using(WebBrowser webBrowser = new WebBrowser())
                     {
                         webBrowser.Navigate("about:blank");
                         HtmlDocument document = webBrowser.Document;
-                        if ((object) document != null)
+                        if((object)document != null)
                             document.Write(html);
                         webBrowser.Refresh();
                         SetDefaultPrinter(printerName);
@@ -264,7 +267,7 @@ namespace Panaroma.Communication.Application
 
             private static void PrintDocument_EndPrint(object sender, PrintEventArgs e)
             {
-                ((Component) sender)?.Dispose();
+                ((Component)sender)?.Dispose();
             }
 
             public static bool PrintToDOS(string printerName, string text)
@@ -278,14 +281,14 @@ namespace Panaroma.Communication.Application
             public static void IfNotExistsCreatePanaromaSideFolder()
             {
                 string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                if (!Directory.Exists(folderPath) || Directory.Exists(Path.Combine(folderPath, "Panaroma")))
+                if(!Directory.Exists(folderPath) || Directory.Exists(Path.Combine(folderPath, "Panaroma")))
                     return;
                 Directory.CreateDirectory(Path.Combine(folderPath, "Panaroma", "Communication"));
             }
 
             public static void CreateFolderIfNotExists(string path)
             {
-                if (Directory.Exists(path))
+                if(Directory.Exists(path))
                     return;
                 Directory.CreateDirectory(path);
             }
@@ -295,9 +298,9 @@ namespace Panaroma.Communication.Application
         {
             public static void CreateFileIfNotExists(string path)
             {
-                if (File.Exists(path))
+                if(File.Exists(path))
                     return;
-                using (File.Create(path))
+                using(File.Create(path))
                 {
                 }
 
@@ -308,9 +311,9 @@ namespace Panaroma.Communication.Application
             {
                 try
                 {
-                    if (!Directory.Exists(OKCProcesses.FolderPath))
+                    if(!Directory.Exists(OKCProcesses.FolderPath))
                         return;
-                    ((IEnumerable<string>) Directory.GetFiles(OKCProcesses.FolderPath, "*.log",
+                    ((IEnumerable<string>)Directory.GetFiles(OKCProcesses.FolderPath, "*.log",
                             SearchOption.TopDirectoryOnly))
                         .Where(e => DateTime.Compare(File.GetCreationTime(e), DateTime.Now.AddDays(-day)) < 0).ToList()
                         .ForEach(new Action<string>(File.Delete));
@@ -324,18 +327,16 @@ namespace Panaroma.Communication.Application
             {
                 try
                 {
-                    if (!Directory.Exists(OKCProcesses.DllFolderPath))
+                    if(!Directory.Exists(OKCProcesses.DllFolderPath))
 
                         return;
-                    ((IEnumerable<string>) Directory.GetFiles(OKCProcesses.DllFolderPath, "*.dat",
+                    ((IEnumerable<string>)Directory.GetFiles(OKCProcesses.DllFolderPath, "*.dat",
                             SearchOption.TopDirectoryOnly))
                         .Where(e => DateTime.Compare(File.GetCreationTime(e), DateTime.Now.AddDays(-day)) < 0).ToList()
                         .ForEach(new Action<string>(File.Delete));
-
                 }
                 catch
                 {
-
                 }
             }
         }
@@ -347,10 +348,10 @@ namespace Panaroma.Communication.Application
 
             public static void AddApplicationStartupRegistry()
             {
-                using (RegistryKey registryKey =
+                using(RegistryKey registryKey =
                     Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
                 {
-                    if (registryKey?.GetValue(ExecutingAssemblyName) != null)
+                    if(registryKey?.GetValue(ExecutingAssemblyName) != null)
                         registryKey.DeleteValue(ExecutingAssemblyName);
                     registryKey?.SetValue(ExecutingAssemblyName, System.Windows.Forms.Application.ExecutablePath);
                 }
@@ -359,13 +360,13 @@ namespace Panaroma.Communication.Application
             public static void IfNotExistsCashIdThenAdd(string cashId, out bool isNeedAdminMode)
             {
                 isNeedAdminMode = false;
-                using (RegistryKey registryKey =
+                using(RegistryKey registryKey =
                     Registry.LocalMachine.OpenSubKey(Path.Combine("SOFTWARE\\Panaroma\\Communication", "Cash"),
                         UserIdAdmin))
                 {
-                    if (registryKey == null)
+                    if(registryKey == null)
                     {
-                        if (UserIdAdmin)
+                        if(UserIdAdmin)
                         {
                             Registry.LocalMachine
                                 .CreateSubKey(Path.Combine("SOFTWARE\\Panaroma\\Communication", "Cash"), UserIdAdmin)
@@ -384,25 +385,25 @@ namespace Panaroma.Communication.Application
 
             public static void UpdateCashId(string cashId)
             {
-                using (RegistryKey registryKey =
+                using(RegistryKey registryKey =
                     RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32))
                 {
-                    using (registryKey.OpenSubKey("Software\\Classes\\CLSID\\", false))
+                    using(registryKey.OpenSubKey("Software\\Classes\\CLSID\\", false))
                     {
                     }
 
                     ;
                 }
 
-                using (RegistryKey registryKey =
+                using(RegistryKey registryKey =
                     Registry.LocalMachine.OpenSubKey("SOFTWARE\\Panaroma\\Communication", true))
                 {
-                    if (registryKey == null)
+                    if(registryKey == null)
                     {
                         bool isNeedAdminMode;
                         IfNotExistsCashIdThenAdd(cashId, out isNeedAdminMode);
                     }
-                    else if (!UserIdAdmin)
+                    else if(!UserIdAdmin)
                     {
                         InternalCommunication.GetInternalCommunication().HasError = true;
                         InternalCommunication.GetInternalCommunication().NotificationWindowses.Add(
@@ -424,10 +425,10 @@ namespace Panaroma.Communication.Application
 
             public static string GetCashId()
             {
-                using (RegistryKey registryKey =
+                using(RegistryKey registryKey =
                     Registry.LocalMachine.OpenSubKey("SOFTWARE\\Panaroma\\Communication", false))
                 {
-                    if (registryKey == null)
+                    if(registryKey == null)
                         return string.Empty;
                     return Registry.LocalMachine
                         .OpenSubKey(Path.Combine("SOFTWARE\\Panaroma\\Communication", "Cash"), false)

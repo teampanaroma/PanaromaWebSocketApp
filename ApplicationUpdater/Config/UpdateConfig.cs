@@ -1,12 +1,10 @@
 ﻿namespace Alfa.Windows.ApplicationUpdater
 {
-
     /// <remarks/>
     [System.Xml.Serialization.XmlType(AnonymousType = true)]
     [System.Xml.Serialization.XmlRoot(Namespace = "", IsNullable = false)]
     public partial class UpdateConfig
     {
-
         private string typeField;
 
         private string nameField;

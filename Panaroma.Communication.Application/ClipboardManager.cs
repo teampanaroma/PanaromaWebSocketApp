@@ -46,6 +46,7 @@ namespace Panaroma.Communication.Application
             return WndProcSuccess;
         }
     }
+
     internal static class NativeMethods
     {
         public const int WM_CLIPBOARDUPDATE = 0x031D;

@@ -129,7 +129,6 @@ namespace Panaroma.Communication.Application
                                 .Build().Show()), Array.Empty<object>());
                                 return;
                             }
-                                
 
                             if(t.IndexOf(okccmd) == -1)
                             {

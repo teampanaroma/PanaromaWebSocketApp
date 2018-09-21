@@ -20,12 +20,12 @@ namespace Panaroma.Communication.Application
             try
             {
                 int logLevel;
-                if (!int.TryParse(ConfigurationManager.AppSettings.Get("AppSettingsLogLevel"), out logLevel))
+                if(!int.TryParse(ConfigurationManager.AppSettings.Get("AppSettingsLogLevel"), out logLevel))
                 {
                     return;
                 }
 
-                if ((int) lvl > logLevel)
+                if((int)lvl > logLevel)
                 {
                     return;
                 }
@@ -33,16 +33,16 @@ namespace Panaroma.Communication.Application
                 string dllPath = OKCProcesses.AppSettingsFolderPath;
                 var currentLogFileName =
                     string.Format("{0}{1}{2}", dllPath, LogFileName, DateTime.Today.ToString("ddMMyy"));
-                if (File.Exists(currentLogFileName))
+                if(File.Exists(currentLogFileName))
                 {
                     var fileInfo = new FileInfo(currentLogFileName);
-                    if (fileInfo.Length > 1024 * 1024 * 2)
+                    if(fileInfo.Length > 1024 * 1024 * 2)
                     {
                         File.Move(currentLogFileName, currentLogFileName + DateTime.Now.ToShortTimeString());
                     }
                 }
 
-                if (!File.Exists(currentLogFileName))
+                if(!File.Exists(currentLogFileName))
                 {
                     File.Create(currentLogFileName);
                 }
@@ -51,7 +51,7 @@ namespace Panaroma.Communication.Application
                     string.Format("[{0}]-[{1}] {2} {3} {4}", DateTime.Now.ToLongTimeString(), lvl, msg,
                         exception != null ? exception.ToString() : string.Empty, Environment.NewLine));
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Info(ex.Message);
             }

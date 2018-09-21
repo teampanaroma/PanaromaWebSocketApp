@@ -31,7 +31,7 @@ namespace Alfa.Windows.ApplicationUpdater
                     .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                     .ToArray();
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 Console.WriteLine(e);
                 throw;
@@ -45,7 +45,7 @@ namespace Alfa.Windows.ApplicationUpdater
                 string hex = BitConverter.ToString(data);
                 return hex.Replace("-", "");
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw ex;
             }
@@ -66,7 +66,7 @@ namespace Alfa.Windows.ApplicationUpdater
                 sr.Close();
                 return line;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw ex;
             }
@@ -83,14 +83,14 @@ namespace Alfa.Windows.ApplicationUpdater
             try
             {
                 var secureStr = new SecureString();
-                if (password.Length > 0)
+                if(password.Length > 0)
                 {
-                    foreach (var c in password.ToCharArray()) secureStr.AppendChar(c);
+                    foreach(var c in password.ToCharArray()) secureStr.AppendChar(c);
                 }
 
                 return secureStr;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw ex;
             }
@@ -107,9 +107,9 @@ namespace Alfa.Windows.ApplicationUpdater
         {
             try
             {
-                using (SqlConnection sqlCon = new SqlConnection(connStr))
+                using(SqlConnection sqlCon = new SqlConnection(connStr))
                 {
-                    using (SqlCommand cmd = new SqlCommand(query, sqlCon))
+                    using(SqlCommand cmd = new SqlCommand(query, sqlCon))
                     {
                         sqlCon.Open();
                         cmd.ExecuteNonQuery();
@@ -120,7 +120,7 @@ namespace Alfa.Windows.ApplicationUpdater
 
                 return true;
             }
-            catch (Exception)
+            catch(Exception)
             {
                 return false;
             }
@@ -140,7 +140,7 @@ namespace Alfa.Windows.ApplicationUpdater
                 string role = "BUILTIN\\Administrators";
                 return principal.IsInRole(role);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw ex;
             }
@@ -166,21 +166,21 @@ namespace Alfa.Windows.ApplicationUpdater
                 info.Domain = "";
                 info.Password = pwString;
                 info.UseShellExecute = false;
-                if (workingDirectory != null)
+                if(workingDirectory != null)
                 {
                     info.WorkingDirectory = workingDirectory;
                 }
 
                 //info.RedirectStandardOutput = true;
                 //info.RedirectStandardError = true;
-                if (args != null)
+                if(args != null)
                 {
                     info.Arguments = args;
                 }
 
                 return Process.Start(info);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw ex;
             }
@@ -201,22 +201,21 @@ namespace Alfa.Windows.ApplicationUpdater
                 info.FileName = exeFile;
                 info.Domain = "";
                 info.UseShellExecute = false;
-                if (workingDirectory != null)
+                if(workingDirectory != null)
                 {
                     info.WorkingDirectory = workingDirectory;
                 }
 
                 //info.RedirectStandardOutput = true;
                 //info.RedirectStandardError = true;
-                if (args != null)
+                if(args != null)
                 {
                     info.Arguments = args;
                 }
 
                 return Process.Start(info);
-
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw ex;
             }
@@ -237,11 +236,9 @@ namespace Alfa.Windows.ApplicationUpdater
         /// <param name="content"></param>
         public static void CallWaitingForm(string content)
         {
-
             formObj = new WaitingForm(content);
             formThread = new Thread(() => formObj.ShowDialog());
             formThread.Start();
-
         }
 
         /// <summary>
@@ -249,10 +246,9 @@ namespace Alfa.Windows.ApplicationUpdater
         /// </summary>
         public static void CloseWaitingForm()
         {
-            if (formThread.IsAlive)
+            if(formThread.IsAlive)
             {
                 formThread.Abort();
-
             }
         }
     }

@@ -41,7 +41,7 @@ namespace Panaroma.Communication.Application
             Header = header;
             Description = description;
             Time = time;
-            if (!_notificationWindows.Any())
+            if(!_notificationWindows.Any())
             {
                 Left = SystemParameters.WorkArea.Width - Width;
                 Top = SystemParameters.WorkArea.Height - Height - 3.0;
@@ -51,16 +51,16 @@ namespace Panaroma.Communication.Application
             else
             {
                 NotificationWindow notificationWindow = _notificationWindows.LastOrDefault();
-                if (notificationWindow != null)
+                if(notificationWindow != null)
                 {
-                    if (notificationWindow.RestoreBounds.Top < Height)
+                    if(notificationWindow.RestoreBounds.Top < Height)
                     {
                         notificationWindow.Close();
                         _notificationWindows.Remove(notificationWindow);
                         notificationWindow = _notificationWindows.LastOrDefault();
                     }
 
-                    if (notificationWindow != null)
+                    if(notificationWindow != null)
                     {
                         Left = notificationWindow.Left;
                         Top = notificationWindow.RestoreBounds.Top - Height - 5.0;
@@ -76,9 +76,9 @@ namespace Panaroma.Communication.Application
 
         protected override void OnActivated(System.EventArgs e)
         {
-            Task.Delay(ViewTimeOut).ContinueWith((Action<Task>) (b =>
-                Dispatcher.BeginInvoke((Action) (() => closeButton_Click(this, new RoutedEventArgs())),
-                    Array.Empty<object>())));
+            Task.Delay(ViewTimeOut).ContinueWith((Action<Task>)(b =>
+               Dispatcher.BeginInvoke((Action)(() => closeButton_Click(this, new RoutedEventArgs())),
+                   Array.Empty<object>())));
         }
 
         public NotificationWindow Build()
@@ -100,7 +100,7 @@ namespace Panaroma.Communication.Application
 
         private void prepareNotificationWindow(NotificationType notificationType)
         {
-            switch (notificationType)
+            switch(notificationType)
             {
                 case NotificationType.Information:
                     NotificationImage.Source = Helpers.ResourceHelper.GetBitmapImage("information");
@@ -166,7 +166,7 @@ namespace Panaroma.Communication.Application
 
         private void MainDockPanel_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left)
+            if(e.ChangedButton == MouseButton.Left)
             {
                 Background.Opacity = 0.5;
                 MainDockPanel.Opacity = 0.5;

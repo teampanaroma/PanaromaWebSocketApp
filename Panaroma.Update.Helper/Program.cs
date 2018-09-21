@@ -57,7 +57,7 @@ namespace Panaroma.Update.Helper
                     writer = new StreamWriter(ostrm);
                     Console.SetOut(writer);
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Console.WriteLine("Log dosyası hazırlanamadı, çıktılar konsola yapılacak. Hata: " + ex.Message);
                 }
@@ -68,14 +68,14 @@ namespace Panaroma.Update.Helper
 
                 IntPtr hWnd = Process.GetCurrentProcess().MainWindowHandle;
 
-                if (hWnd != IntPtr.Zero)
+                if(hWnd != IntPtr.Zero)
                 {
                     ShowWindow(hWnd, 0);
                 }
 
                 updatePrc(args);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Console.WriteLine("Hata oluştu: " + ex.Message);
                 exitCode = -1;
@@ -103,7 +103,7 @@ namespace Panaroma.Update.Helper
         /// <param name="args"></param>
         private static void updatePrc(string[] args)
         {
-            if (args == null || args.Length != 4)
+            if(args == null || args.Length != 4)
             {
                 throw new Exception("Update Argümanları Hatalı");
             }
@@ -122,27 +122,27 @@ namespace Panaroma.Update.Helper
             Console.WriteLine("Start Unzip");
             var result = ApplicationUpdate.StartUnrarProcess(_RarFileName, null, _StartupPath);
 
-            if (!result)
+            if(!result)
                 throw new Exception("Unzip Başarısız");
 
             string[] tmpPathArr = _RarFileName.Split('\\');
             string tmpPath = tmpPathArr[0];
-            for (int i = 1; i < tmpPathArr.Length - 1; i++)
+            for(int i = 1; i < tmpPathArr.Length - 1; i++)
             {
                 tmpPath += "\\" + tmpPathArr[i];
             }
 
             Console.WriteLine("remove directory: " + tmpPath);
-            if (Directory.Exists(tmpPath))
+            if(Directory.Exists(tmpPath))
             {
                 Console.WriteLine("Directory exists");
                 Directory.Delete(tmpPath, true);
             }
 
-            if (_RunNewExe)
+            if(_RunNewExe)
             {
                 Console.WriteLine("Start Exe File");
-                while (!ApplicationUpdate.StartApp(_StartupPath, _ExeName)) ;
+                while(!ApplicationUpdate.StartApp(_StartupPath, _ExeName)) ;
             }
         }
     }

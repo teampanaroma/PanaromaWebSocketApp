@@ -3,13 +3,15 @@ using System.Reflection;
 
 namespace Alfa.Windows.ApplicationUpdater
 {
-    class Settings
+    internal class Settings
     {
         public static bool APPUPDATER_TEST_MODE = false;
         public static int UPDATE_CHECK_INTERVAL = 1000;
         public static string TERMINAL_SERIAL_NUM = null;
-        public static string APP_SEARCH_PATH =Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName,
+
+        public static string APP_SEARCH_PATH = Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName,
             "PanaromaWebSocketApp");
+
         public static string APP_SEARCH_CONDITION = APP_SEARCH_PATH + "App";
         public static string APPLICATIONMANAGER_FOLDER_PATH = @"C:\ApplicationManager";
         public static string APPLICATIONMANAGER_TYPE_NAME = "ApplicationManager";

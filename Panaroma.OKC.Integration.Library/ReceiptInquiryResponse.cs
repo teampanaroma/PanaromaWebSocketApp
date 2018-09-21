@@ -24,12 +24,12 @@ namespace Panaroma.OKC.Integration.Library
                 CreditCardPaymentCount = members.CreditCardPaymentCnt,
                 OtherPaymentsTotal = members.OtherPaymentsTotal
             };
-            if (receiptInquiryResponse.CreditCardPaymentCount == 0)
+            if(receiptInquiryResponse.CreditCardPaymentCount == 0)
                 return receiptInquiryResponse;
             int num = 1;
-            foreach (CreditPaymentResultTable paymentResultTable in members.CreditPaymentResult)
+            foreach(CreditPaymentResultTable paymentResultTable in members.CreditPaymentResult)
             {
-                if (paymentResultTable.AcqId != null)
+                if(paymentResultTable.AcqId != null)
                 {
                     receiptInquiryResponse.CreditCardPayments.Add(new Dictionary<int, CreditPaymentResultTable>()
                     {

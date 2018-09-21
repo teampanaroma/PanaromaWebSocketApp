@@ -12,13 +12,13 @@ using System.Xml.Serialization;
 
 namespace Alfa.Windows.ApplicationUpdater
 {
-    class Program
+    internal class Program
     {
-        static XmlSerializer updateXmlSerializer;
-        static XmlSerializer appConfigXmlSerializer;
-        static IList<string> updateFolders;
-        static IList<string> appFolders;
-        static List<Installedsoftware> installedSoftwares = new List<Installedsoftware>();
+        private static XmlSerializer updateXmlSerializer;
+        private static XmlSerializer appConfigXmlSerializer;
+        private static IList<string> updateFolders;
+        private static IList<string> appFolders;
+        private static List<Installedsoftware> installedSoftwares = new List<Installedsoftware>();
 
         /// <summary>
         /// Açılışta test moduna göre pencere gizleme veya gösterme için gerekli metod.
@@ -44,15 +44,12 @@ namespace Alfa.Windows.ApplicationUpdater
         /// Main Method
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-
-
             FileStream ostrm = null;
             StreamWriter writer = null;
             TextWriter originalOut = Console.Out;
             string logFileName;
-
 
             try
             {
@@ -70,7 +67,7 @@ namespace Alfa.Windows.ApplicationUpdater
                     writer = new StreamWriter(ostrm);
                     Console.SetOut(writer);
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Console.WriteLine("Log dosyası hazırlanamadı, çıktılar konsola yapılacak. Hata: " + ex.Message);
                 }
@@ -79,18 +76,13 @@ namespace Alfa.Windows.ApplicationUpdater
                 Console.WriteLine("########## AppUpdaterDemo Başlatıldı: " + DateTime.Now.ToString() +
                                   "    ############\n");
 
-
                 updateXmlSerializer = new XmlSerializer(typeof(UpdateConfig));
                 appConfigXmlSerializer = new XmlSerializer(typeof(AppConfig));
 
                 SetTerminalSerialNum();
                 IsDownloadedAppExist();
 
-
-
                 Console.WriteLine("Klasörler Taranıyor\n");
-
-
 
                 try
                 {
@@ -112,7 +104,6 @@ namespace Alfa.Windows.ApplicationUpdater
 
                     CheckSofwares();
 
-
                     Console.WriteLine("Create and fill UpdateRequestDTO\n");
                     UpdateRequestDTO updateRequestDTO = new UpdateRequestDTO();
                     updateRequestDTO.TerminalSerialNum = Settings.TERMINAL_SERIAL_NUM;
@@ -124,12 +115,12 @@ namespace Alfa.Windows.ApplicationUpdater
                         UpdateCheckClient.checkForUpdates(updateRequestDTO, Settings.UPDATE_WEB_API_URL);
 
                     Utility.CloseWaitingForm();
-                    if (updateResponse.Result && updateResponse.UpdatePackages.Count() > 0)
+                    if(updateResponse.Result && updateResponse.UpdatePackages.Count() > 0)
                     {
                         Utility.CallWaitingForm("Güncellemer İndiriliyor.. Lütfen Cihazınızı Kapatmayınız..");
                         Console.WriteLine("Result true\n");
                         IList<FtpInfo> userInformation = UpdateCheckClient.GetFtpUserInformation(Settings.GET_FTP_INFO);
-                        foreach (Updatepackage updatePackage in updateResponse.UpdatePackages)
+                        foreach(Updatepackage updatePackage in updateResponse.UpdatePackages)
                         {
                             Console.WriteLine("//////////////////////////////////////////\n");
                             Console.WriteLine("download new update\n ");
@@ -138,7 +129,7 @@ namespace Alfa.Windows.ApplicationUpdater
                                 Settings.UPDATE_DOWNLOAD_TMP_PATH, userInformation.First().UserName,
                                 userInformation.First().Password);
                             Console.WriteLine("new update downloaded\n");
-                            if (newZipFileArr == null || updatePackage.AppType == null)
+                            if(newZipFileArr == null || updatePackage.AppType == null)
                             {
                                 Console.WriteLine("new zip file arr or apptype null\n");
                                 continue;
@@ -148,7 +139,7 @@ namespace Alfa.Windows.ApplicationUpdater
                             Console.WriteLine("update tmp path: " + updateTmpPath + "\n");
                             string updatedZipFileName = updateTmpPath + "\\" + Settings.UPDATE_ZIP_FILE_NAME;
                             Console.WriteLine("updated zip file name: " + updatedZipFileName + "\n");
-                            if (Directory.Exists(updateTmpPath))
+                            if(Directory.Exists(updateTmpPath))
                             {
                                 Directory.Delete(updateTmpPath, true);
                             }
@@ -172,24 +163,20 @@ namespace Alfa.Windows.ApplicationUpdater
                             Console.WriteLine("update config has been written to: " + updateTmpPath + "\\" +
                                               Settings.UPDATE_CONTENT_FILE_NAME + "\n");
                             Console.WriteLine("//////////////////////////////////////////\n");
-
                         }
-
-
                     }
 
                     Utility.CloseWaitingForm();
                     RunInitalApplication();
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Utility.CloseWaitingForm();
                     RunInitalApplication();
                     Console.WriteLine("Update Check Loop Error: " + ex.Message + "\n");
                 }
-
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Utility.CloseWaitingForm();
                 RunInitalApplication();
@@ -197,7 +184,6 @@ namespace Alfa.Windows.ApplicationUpdater
             }
             finally
             {
-
                 Console.WriteLine("#############  " + DateTime.Now.ToString() + " #############");
                 Console.SetOut(originalOut);
                 try
@@ -207,7 +193,6 @@ namespace Alfa.Windows.ApplicationUpdater
                 }
                 catch
                 {
-
                 }
             }
 
@@ -221,7 +206,7 @@ namespace Alfa.Windows.ApplicationUpdater
         {
             try
             {
-                if (!File.Exists(@"C:\terminalconfig.txt"))
+                if(!File.Exists(@"C:\terminalconfig.txt"))
                 {
                     string result = Microsoft.VisualBasic.Interaction.InputBox(
                         "Lütfen Bir defaya mahsus olmak üzere Cihazınız Üzerinde bulunan Mali Sicil numarasını dikkatlice giriniz",
@@ -237,13 +222,11 @@ namespace Alfa.Windows.ApplicationUpdater
                     Settings.TERMINAL_SERIAL_NUM = Utility.GetTSNoFromFile();
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Console.WriteLine("TerminalSerial Number Okunamadı: " + ex.Message);
                 RunInitalApplication();
-
             }
-
         }
 
         /// <summary>
@@ -258,13 +241,12 @@ namespace Alfa.Windows.ApplicationUpdater
                     .Select(f => f.FullName)
                     .ToList();
                 Console.WriteLine("Bulunan Klasör sayısı : " + updateFolders.Count + "\n");
-                if (updateFolders.Count > 0)
+                if(updateFolders.Count > 0)
                 {
                     RunUpdater();
                 }
-
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Utility.CloseWaitingForm();
                 RunInitalApplication();
@@ -277,10 +259,8 @@ namespace Alfa.Windows.ApplicationUpdater
         /// </summary>
         private static void RunUpdater()
         {
-
-            foreach (string updateDir in updateFolders)
+            foreach(string updateDir in updateFolders)
             {
-
                 try
                 {
                     Console.WriteLine("#####################\n");
@@ -290,13 +270,13 @@ namespace Alfa.Windows.ApplicationUpdater
                                       "\n");
                     StreamReader updateConfigFile =
                         new StreamReader(updateDir + "\\" + Settings.UPDATE_CONTENT_FILE_NAME);
-                    UpdateConfig updateConfig = (UpdateConfig) updateXmlSerializer.Deserialize(updateConfigFile);
+                    UpdateConfig updateConfig = (UpdateConfig)updateXmlSerializer.Deserialize(updateConfigFile);
                     updateConfigFile.Close();
                     Console.WriteLine("Config Dosyası Okundu\n");
                     string newAppPath = Settings.APP_SEARCH_PATH + updateConfig.Type;
                     Console.WriteLine("Yeni Uygulama Dizini: " + newAppPath + "\n");
 
-                    if (updateConfig.Type == Settings.APPLICATIONMANAGER_TYPE_NAME)
+                    if(updateConfig.Type == Settings.APPLICATIONMANAGER_TYPE_NAME)
                     {
                         newAppPath = Settings.APPLICATIONMANAGER_FOLDER_PATH;
                         Console.WriteLine("Yeni Uygulama dizini değişti: " + newAppPath + "\n");
@@ -304,7 +284,7 @@ namespace Alfa.Windows.ApplicationUpdater
 
                     string newAppContentFilePath = newAppPath + "\\" + Settings.CONTENT_FILE_NAME;
                     Console.WriteLine("Yeni uygulamanın content file dizini: " + newAppContentFilePath + "\n");
-                    if (!Directory.Exists(newAppPath))
+                    if(!Directory.Exists(newAppPath))
                     {
                         Console.WriteLine("Yeni uygulamaya ait dizin bulunamadı\n");
                         Directory.CreateDirectory(newAppPath);
@@ -319,13 +299,12 @@ namespace Alfa.Windows.ApplicationUpdater
                         appConfigXmlSerializer.Serialize(newContentFS, appConfig);
                         newContentFS.Close();
                         Console.WriteLine("Uygulama config bitirildi\n");
-
                     }
                     else
                     {
                         Console.WriteLine("Uygulama Dizini mevcut\n");
                         AppConfig appConfig = null;
-                        if (!File.Exists(newAppContentFilePath))
+                        if(!File.Exists(newAppContentFilePath))
                         {
                             appConfig = new AppConfig();
                             Console.WriteLine("App Config bulunamadı, oluşturuldu\n");
@@ -334,22 +313,21 @@ namespace Alfa.Windows.ApplicationUpdater
                         {
                             Console.WriteLine("App Config bulundu\n");
                             StreamReader contentFile = new StreamReader(newAppContentFilePath);
-                            appConfig = (AppConfig) appConfigXmlSerializer.Deserialize(contentFile);
+                            appConfig = (AppConfig)appConfigXmlSerializer.Deserialize(contentFile);
                             contentFile.Close();
 
                             Console.WriteLine("App Config Okundu\n");
-                            if (File.Exists(newAppContentFilePath))
+                            if(File.Exists(newAppContentFilePath))
                             {
                                 File.Delete(newAppContentFilePath);
 
                                 Console.WriteLine(" App Config Silindi\n");
-
                             }
 
-                            if (appConfig.Name != updateConfig.Name)
+                            if(appConfig.Name != updateConfig.Name)
                             {
                                 Console.WriteLine("app config name and update config name not same\n");
-                                if (Directory.Exists(newAppPath))
+                                if(Directory.Exists(newAppPath))
                                 {
                                     Directory.Delete(newAppPath, true);
                                 }
@@ -357,7 +335,6 @@ namespace Alfa.Windows.ApplicationUpdater
                                 Directory.CreateDirectory(newAppPath);
                                 appConfig = new AppConfig();
                                 Console.WriteLine("deleted all old sw directory. Created new appconfig\n");
-
                             }
                         }
 
@@ -374,7 +351,6 @@ namespace Alfa.Windows.ApplicationUpdater
                         Console.WriteLine("new appconfig file has been written\n");
                     }
 
-
                     //_RarFileName = args[0];                     //Download edilen dosyanın pathi
                     //_StartupPath = args[1];                     //yeni dosyaların kopyalanacağı dizin
                     //_ExeName = args[2];                         //yeni dosyaların kopyalandığı dizinde çalıştırılacak uygulama
@@ -384,11 +360,11 @@ namespace Alfa.Windows.ApplicationUpdater
                                               Boolean.FalseString + "\"";
 
                     Console.WriteLine("UpdateHelper.exe args: " + updateHelperArgs + "\n");
-                    if (updateConfig.Type == Settings.UPDATER_APP_TYPE)
+                    if(updateConfig.Type == Settings.UPDATER_APP_TYPE)
                     {
                         #region app updater güncelleme bug ı çözülene kadar kapalı
 
-                        //OMG IT'S ME ! 
+                        //OMG IT'S ME !
                         updateHelperArgs = "\"" + updateDir + "\\" + Settings.UPDATE_ZIP_FILE_NAME + "\" " + "\"" +
                                            newAppPath + "\" " + "\"" + Settings.STANDART_APP_NAME + "\" " + "\"" +
                                            Boolean.TrueString + "\"";
@@ -398,7 +374,7 @@ namespace Alfa.Windows.ApplicationUpdater
                             Settings.UPDATER_WORKING_DIRECTORY);
                         Environment.Exit(0);
 
-                        #endregion
+                        #endregion app updater güncelleme bug ı çözülene kadar kapalı
                     }
                     else
                     {
@@ -411,13 +387,12 @@ namespace Alfa.Windows.ApplicationUpdater
                     }
                 }
 
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Utility.CloseWaitingForm();
                     Console.WriteLine("Update Loop Error: " + ex.Message + "\n");
                 }
             }
-
         }
 
         /// <summary>
@@ -425,7 +400,7 @@ namespace Alfa.Windows.ApplicationUpdater
         /// </summary>
         private static void CheckSofwares()
         {
-            for (int i = 0; i < appFolders.Count - 1; i++)
+            for(int i = 0; i < appFolders.Count - 1; i++)
             {
                 Console.WriteLine("*************************");
                 try
@@ -434,7 +409,7 @@ namespace Alfa.Windows.ApplicationUpdater
 
                     Console.WriteLine("Check xml file\n");
                     StreamReader contentFile = new StreamReader(contentFilePath);
-                    AppConfig appConfig = (AppConfig) appConfigXmlSerializer.Deserialize(contentFile);
+                    AppConfig appConfig = (AppConfig)appConfigXmlSerializer.Deserialize(contentFile);
                     contentFile.Close();
                     Console.WriteLine("Content file has been read\n");
 
@@ -447,19 +422,19 @@ namespace Alfa.Windows.ApplicationUpdater
                     string signatureFilePath = appFolders[i] + "\\" + Settings.SIGNATURE_FILE_NAME;
                     Console.WriteLine("Signature File Path: " + signatureFilePath + "\n");
                     Console.WriteLine("Content File Path: " + contentFilePath + "\n");
-                    if (!File.Exists(contentFilePath))
+                    if(!File.Exists(contentFilePath))
                     {
                         Console.WriteLine("content dosyası bulunamadı\n");
                         continue;
                     }
 
-                    if (!File.Exists(appFilePath) && !File.Exists(appFilePath + Settings.DISABLED_APP_EXTENSION))
+                    if(!File.Exists(appFilePath) && !File.Exists(appFilePath + Settings.DISABLED_APP_EXTENSION))
                     {
                         Console.WriteLine(appFilePath + " bulunamadı");
                         continue;
                     }
 
-                    if (!File.Exists(signatureFilePath))
+                    if(!File.Exists(signatureFilePath))
                     {
                         Console.WriteLine("signature dosyası bulunamadı\n");
                         continue;
@@ -468,7 +443,7 @@ namespace Alfa.Windows.ApplicationUpdater
                     Console.WriteLine("Get hash\n");
                     SHA256Managed sha = new SHA256Managed();
                     byte[] hash = null;
-                    if (File.Exists(appFilePath))
+                    if(File.Exists(appFilePath))
                     {
                         Console.WriteLine("appfile exists\n");
                         hash = sha.ComputeHash(File.ReadAllBytes(appFilePath));
@@ -485,7 +460,7 @@ namespace Alfa.Windows.ApplicationUpdater
                     string hashStr = Utility.byteArrayToHex(hash);
                     string allowedIpAddresses = "";
                     Console.WriteLine("Start Firewall settings\n");
-                    for (int j = 0; j < appConfig.FwRules.Length; j++)
+                    for(int j = 0; j < appConfig.FwRules.Length; j++)
                     {
                         AppConfigFwRule fwRule = appConfig.FwRules[j];
                         allowedIpAddresses += fwRule.Ip + Settings.ALLOWED_IP_SEPERATOR;
@@ -504,7 +479,7 @@ namespace Alfa.Windows.ApplicationUpdater
                     installedSoftwares.Add(installedSw);
                     Console.WriteLine("installed software added to list\n");
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Utility.CloseWaitingForm();
                     RunInitalApplication();
@@ -524,16 +499,15 @@ namespace Alfa.Windows.ApplicationUpdater
             p.StartInfo.UseShellExecute = false;
 
             //Ön ofis yüklü ise aç yok ise servis uygulmasını çalıştır.
-            if (Directory.Exists("D:\\App3"))
+            if(Directory.Exists("D:\\App3"))
             {
                 XmlSerializer xmlserializer = new XmlSerializer(typeof(AppConfig));
                 StreamReader reader = new StreamReader("D:\\App3\\content.xml");
-                AppConfig appConfig = (AppConfig) xmlserializer.Deserialize(reader);
+                AppConfig appConfig = (AppConfig)xmlserializer.Deserialize(reader);
                 reader.Close();
 
                 p.StartInfo.FileName = "D:\\App3\\" + appConfig.MainAppName;
                 p.Start();
-
             }
             else
             {
@@ -541,6 +515,5 @@ namespace Alfa.Windows.ApplicationUpdater
                 p.Start();
             }
         }
-
     }
 }

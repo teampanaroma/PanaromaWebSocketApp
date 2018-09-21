@@ -43,13 +43,13 @@ namespace Panaroma.Communication.Application
 
         private static List<OKCProcesses> LoadOkcProcess()
         {
-            if (!File.Exists(Path.Combine(FolderPath, GetFileName())))
+            if(!File.Exists(Path.Combine(FolderPath, GetFileName())))
             {
                 return new List<OKCProcesses>();
             }
 
             string str = File.ReadAllText(Path.Combine(FolderPath, GetFileName()));
-            if (string.IsNullOrEmpty(str))
+            if(string.IsNullOrEmpty(str))
             {
                 return new List<OKCProcesses>();
             }
@@ -97,7 +97,7 @@ namespace Panaroma.Communication.Application
             Members responseMembers, string message)
         {
             OKCProcesses okcProcesses = okcProcesseses.LastOrDefault();
-            if (okcProcesses == null)
+            if(okcProcesses == null)
                 return;
             okcProcesses.ProcessDateTime.EndDateTime = DateTime.Now;
             okcProcesses.ProcessDateTime.TotalProcessTime =
@@ -106,10 +106,10 @@ namespace Panaroma.Communication.Application
             okcProcesses.ProcessResult.Description = message;
             okcProcesses.OKCSerialNumber = responseMembers.FiscalId;
             okcProcesses.ProcessRequest.OkcRequest =
-                responseMembers.InternalErrNum == null ? null : (object) requestMembers;
+                responseMembers.InternalErrNum == null ? null : (object)requestMembers;
             okcProcesses.ProcessResponse.RawResponse = message;
             okcProcesses.ProcessResponse.OkcResponse =
-                responseMembers.InternalErrNum == null ? null : (object) responseMembers;
+                responseMembers.InternalErrNum == null ? null : (object)responseMembers;
             File.WriteAllText(Path.Combine(FolderPath, GetFileName()), JsonConvert.SerializeObject(okcProcesseses,
                 new JsonSerializerSettings()
                 {

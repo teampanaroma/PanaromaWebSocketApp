@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Interop;
 
 namespace Panaroma.Communication.Application
 {
@@ -10,6 +9,7 @@ namespace Panaroma.Communication.Application
     {
         [DllImport("User32.dll", SetLastError = true)]
         private static extern IntPtr GetOpenClipboardWindow();
+
         [DllImport("User32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool IsClipboardFormatAvailable(uint format);
@@ -36,9 +36,9 @@ namespace Panaroma.Communication.Application
         private const uint CF_UNICODETEXT = 13U;
 
         private const uint GHND = 0x0042;
+
         public static string GetText()
         {
-      
             if(!IsClipboardFormatAvailable(CF_UNICODETEXT))
                 return null;
 
@@ -77,6 +77,7 @@ namespace Panaroma.Communication.Application
                 CloseClipboard();
             }
         }
+
         public static bool IsFree()
         {
             return (GetOpenClipboardWindow() == IntPtr.Zero);
@@ -91,6 +92,7 @@ namespace Panaroma.Communication.Application
 
             return SetData(CF_UNICODETEXT, IntPtr.Zero, data);
         }
+
         private static bool SetData(uint format, IntPtr windowHandle, byte[] data)
         {
             try
@@ -129,5 +131,4 @@ namespace Panaroma.Communication.Application
             }
         }
     }
-
 }

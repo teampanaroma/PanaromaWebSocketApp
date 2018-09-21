@@ -7,7 +7,7 @@ namespace Panaroma.Communication.Application
         public static void SetToCommunicationResult(bool hasError, object result, TcpCommand tcpCommand,
             Exception exception = null, bool showDesktop = false)
         {
-            if (hasError)
+            if(hasError)
             {
                 InternalCommunication.GetInternalCommunication().HasError = true;
                 InternalCommunication.GetInternalCommunication().ShowDesktop = showDesktop;

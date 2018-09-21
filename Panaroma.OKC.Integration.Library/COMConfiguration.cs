@@ -5,7 +5,8 @@ namespace Panaroma.OKC.Integration.Library
 {
     public class COMConfiguration : IConfiguration
     {
-        [Description("Zorunlu alan.")] public string PortName { get; set; }
+        [Description("Zorunlu alan.")]
+        public string PortName { get; set; }
 
         public COMConfiguration(string portName)
         {
@@ -14,7 +15,7 @@ namespace Panaroma.OKC.Integration.Library
 
         public T GetConfiguration<T>()
         {
-            return (T) Convert.ChangeType(this, typeof(T));
+            return (T)Convert.ChangeType(this, typeof(T));
         }
     }
 }

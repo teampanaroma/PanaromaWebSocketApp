@@ -17,6 +17,5 @@ namespace Panaroma.Communication.Application
 
         [DllImport("Kernel32.dll", SetLastError = true)]
         public static extern int GlobalSize(IntPtr hMem);
-
     }
 }

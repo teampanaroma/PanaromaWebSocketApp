@@ -8,7 +8,7 @@
 
         public void DoWork()
         {
-            if (!(TcpCommand.OKCModel == "Verifone"))
+            if(!(TcpCommand.OKCModel == "Verifone"))
                 return;
             new OKCVerifone(TcpCommand).DoWork();
         }
