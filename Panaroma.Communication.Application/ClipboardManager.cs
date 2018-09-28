@@ -15,7 +15,7 @@ namespace Panaroma.Communication.Application
             if(source == null)
             {
                 throw new ArgumentException(
-                    "Window source MUST be initialized first, such as in the Window's OnSourceInitialized handler."
+                    "Pencere kaynağı, Windows'un OnSourceInitialized işleyicisindeki gibi ilk önce başlatılmalıdır."
                     , nameof(windowSource));
             }
 

@@ -66,6 +66,20 @@ namespace Panaroma.Communication.Application
 
             #endregion ProcessTypeClipBoard
 
+            #region NetworkComminucation
+            else if(ConfigurationManager.AppSettings["ProcessType"]=="3")
+            {
+                Title = "                                                   MX-915 İletişim Ekranı" + " - " + "ClipBoard";
+                InitializeComponent();
+                MainWindowProperty();
+                VisibilityDefaultStatus();
+                System.Windows.Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+                _dataGridWarning = GetDefaultDataGrid(DataGridType.Warning);
+                _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
+                _dataGridError = GetDefaultDataGrid(DataGridType.Error);
+            }
+            #endregion
+
             #region ProcessTypeNone
 
             else
@@ -176,14 +190,18 @@ namespace Panaroma.Communication.Application
                     else
                     {
                         Dispatcher.BeginInvoke(
-                        new Action(() => (new NotificationWindow(NotificationType.Information, "Info ",
+                        new Action(() => (new NotificationWindow(NotificationType.Information, "Bilgi ",
                          "Mesaj Cevabı Yazıldı...", Helpers.DateTimeHelper.GetDateTime()))
                         .Build().Show()), Array.Empty<object>());
                     }
                 }
                 catch(Exception ex)
                 {
-                    lblVersionInfo.Content = "Clipboard Açılamadı..." + ex.Data;
+                    Dispatcher.BeginInvoke(
+                    new Action(() => (new NotificationWindow(NotificationType.Error, "Hata ",
+                    "ClipBoard Açılamadı Yeniden Başlatılıyor....", Helpers.DateTimeHelper.GetDateTime()))
+                    .Build().Show()), Array.Empty<object>());
+                    App.AllowMultipleApplication(true);
                 }
             }
         }
@@ -191,9 +209,8 @@ namespace Panaroma.Communication.Application
         private void MainWindowProperty()
         {
             ShowInTaskbar = true;
-            //lblVersionInfo.Content = Clipboard.GetText();
             lblVersionInfo.Content = "Version: " + getRunningVersion().Major + "." + getRunningVersion().MajorRevision +
-                                     "." + getRunningVersion().Build + "." + " Release_180815-56";
+                                     "." + getRunningVersion().Build + "." + " Release_180928-1709";
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ToolTip = "Bu Program WebSocket teknolojisi veya ClipBoard ile haberleşme yapar. Yalnızca Json Formatı ile habeleşme kurar.";

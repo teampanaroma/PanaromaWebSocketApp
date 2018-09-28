@@ -1786,9 +1786,30 @@ namespace Panaroma.OKC.Integration.Library
 
         public OKC TryPrintXReport()
         {
-            MethodInit(Request, "TryPrintXReport");
-            if(CheckOkcConnection())
-                return TryPrintReport(new Members(), string.Format("{0:x3}", 1048576));
+            //MethodInit(Request, "TryPrintXReport");
+            //if(CheckOkcConnection())
+            //    return TryPrintReport(new Members(), string.Format("{0:x3}", 1048576));
+            //SetApplicationResult(-100, _request.SoftCopyOfReport);
+            //return this;
+
+            try
+            {
+                MethodInit(Request, "TryPrintZReport");
+                if(!CheckOkcConnection())
+                    return this;
+                Members members = new Members()
+                {
+                    ReportType = string.Format("{0:x3}", 1048576)
+                };
+                Helpers.MembersHelper.SetDefaultPadLeft(ref members);
+                _ecrInterface.SendCmd2ECR(Tags.msgREQ_PrintReport, members, ref _result);
+                SetApplicationResult(-100, (object)_result.SoftCopyOfReport);
+            }
+            catch(Exception ex)
+            {
+                Helpers.Conditional.SetExceptionInformation(ref this._processInformation, ex);
+            }
+
             return this;
         }
 

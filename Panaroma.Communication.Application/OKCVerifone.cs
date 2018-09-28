@@ -363,7 +363,7 @@ namespace Panaroma.Communication.Application
                     batchTranItems2.Add(batchTranItem);
                 }
 
-                if(batchTranItems.Count > 40)
+                if(batchTranItems.Count > 39)
                 {
                     action();
                 }

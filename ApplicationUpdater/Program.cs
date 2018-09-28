@@ -38,8 +38,6 @@ namespace Alfa.Windows.ApplicationUpdater
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        private static int ShowConsoleMinimized = 0;
-
         /// <summary>
         /// Main Method
         /// </summary>
