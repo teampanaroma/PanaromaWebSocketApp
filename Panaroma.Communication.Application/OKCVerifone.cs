@@ -90,6 +90,7 @@ namespace Panaroma.Communication.Application
                         }
                     case "7":
                         {
+                            TryGetReceiptTotal();
                             break;
                         }
                     case "8":
@@ -387,7 +388,12 @@ namespace Panaroma.Communication.Application
             _requestMembers = JsonConvert.DeserializeObject<Members>(okcParameters.Content);
             _okc.TryDoPayment(_requestMembers);
         }
-
+        public void TryGetReceiptTotal()
+        {
+            if(!PrepareSaleOrAdmin(EcrModeType.SALE))
+                return;
+            _okc.TryGetReceiptTotal();
+        }
         public void TryReceiptEnd()
         {
             if(!PrepareSaleOrAdmin(EcrModeType.SALE))

@@ -1610,8 +1610,8 @@ namespace Panaroma.OKC.Integration.Library
             else
             {
                 TryGMP3Echo();
-                if(string.IsNullOrEmpty(this._result.InternalErrNum) || !this._result.InternalErrNum.Equals("0") ||
-                    (string.IsNullOrEmpty(this._result.groupDF6F.status) || this._result.groupDF6F.status.Equals("1D")))
+                if(string.IsNullOrEmpty(_result.InternalErrNum) || !_result.InternalErrNum.Equals("0") ||
+                    (string.IsNullOrEmpty(_result.groupDF6F.status) || _result.groupDF6F.status.Equals("1D")))
                     return;
                 TryGMP3Pair();
             }
@@ -1707,7 +1707,7 @@ namespace Panaroma.OKC.Integration.Library
                 if(endPLUNo > 100000)
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
-                        string.Format("GetPLUList işleminde {0} 100.000 den büyük olamaz.", (object)"EndPLUNo"));
+                        string.Format("GetPLUList işleminde {0} 100.000 den büyük olamaz.", "EndPLUNo"));
                     return this;
                 }
 
@@ -1743,11 +1743,11 @@ namespace Panaroma.OKC.Integration.Library
                 };
                 Helpers.MembersHelper.SetDefaultPadLeft(ref members);
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_PrintReport, members, ref _result);
-                SetApplicationResult(-100, (object)_result.SoftCopyOfReport);
+                SetApplicationResult(-100, _result.SoftCopyOfReport);
             }
             catch(Exception ex)
             {
-                Helpers.Conditional.SetExceptionInformation(ref this._processInformation, ex);
+                Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
 
             return this;
@@ -1786,12 +1786,6 @@ namespace Panaroma.OKC.Integration.Library
 
         public OKC TryPrintXReport()
         {
-            //MethodInit(Request, "TryPrintXReport");
-            //if(CheckOkcConnection())
-            //    return TryPrintReport(new Members(), string.Format("{0:x3}", 1048576));
-            //SetApplicationResult(-100, _request.SoftCopyOfReport);
-            //return this;
-
             try
             {
                 MethodInit(Request, "TryPrintZReport");
@@ -1803,11 +1797,11 @@ namespace Panaroma.OKC.Integration.Library
                 };
                 Helpers.MembersHelper.SetDefaultPadLeft(ref members);
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_PrintReport, members, ref _result);
-                SetApplicationResult(-100, (object)_result.SoftCopyOfReport);
+                SetApplicationResult(-100, _result.SoftCopyOfReport);
             }
             catch(Exception ex)
             {
-                Helpers.Conditional.SetExceptionInformation(ref this._processInformation, ex);
+                Helpers.Conditional.SetExceptionInformation(ref _processInformation, ex);
             }
 
             return this;
