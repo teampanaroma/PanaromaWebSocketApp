@@ -132,19 +132,11 @@ namespace Panaroma.Communication.Application
                             oldValue = t;
                             if(t == okccmd)
                             {
-                                //Dispatcher.BeginInvoke(
-                                // new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
-                                //"Yalnızca tag gönderilemez !!!", Helpers.DateTimeHelper.GetDateTime()))
-                                //.Build().Show()), Array.Empty<object>());
                                 return;
                             }
 
                             if(t.IndexOf(okccmd) == -1)
                             {
-                                //Dispatcher.BeginInvoke(
-                                //new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
-                                //"Tag Bulunamadı !!!", Helpers.DateTimeHelper.GetDateTime()))
-                                //.Build().Show()), Array.Empty<object>());
                                 return;
                             }
 
@@ -174,20 +166,6 @@ namespace Panaroma.Communication.Application
                                 _finally();
                             }
                         }
-                        else
-                        {
-                            //Dispatcher.BeginInvoke(
-                            //new Action(() => (new NotificationWindow(NotificationType.Warning, "Uyarı ",
-                            //"Gönderilen format doğru başlamadı. Komut tag #okccmd# ile başlamalı Kontrol ediniz. !!!", Helpers.DateTimeHelper.GetDateTime()))
-                            //.Build().Show()), Array.Empty<object>());
-                        }
-                    }
-                    else
-                    {
-                        //Dispatcher.BeginInvoke(
-                        //new Action(() => (new NotificationWindow(NotificationType.Information, "Bilgi ",
-                        // "Mesaj Cevabı Yazıldı...", Helpers.DateTimeHelper.GetDateTime()))
-                        //.Build().Show()), Array.Empty<object>());
                     }
                 }
                 catch(Exception ex)
