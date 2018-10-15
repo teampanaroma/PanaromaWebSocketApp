@@ -209,7 +209,7 @@ namespace Panaroma.OKC.Integration.Library
                 else
                 {
                     Helpers.Conditional.SetSuccessInformation(ref _processInformation);
-                    Thread.Sleep(1000);
+                   // Thread.Sleep(1000);
                 }
             }
             catch(Exception ex)
@@ -226,8 +226,8 @@ namespace Panaroma.OKC.Integration.Library
             {
                 MethodInit(Request, "TryGMP3Pair");
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GMP3Pair, new Members(), ref _result);
-                SetApplicationResult(-100, null);
-                Thread.Sleep(3000);
+                SetApplicationResult(-100, _result);
+                //Thread.Sleep(3000);
             }
             catch(Exception ex)
             {
@@ -688,7 +688,6 @@ namespace Panaroma.OKC.Integration.Library
                         return this;
                     }
                 }
-
                 Helpers.MembersHelper.SetDefaultPadLeft(ref requestMembers);
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_DoPayment, requestMembers, ref _result);
                 int code = int.Parse(_result.InternalErrNum);
@@ -731,8 +730,38 @@ namespace Panaroma.OKC.Integration.Library
                                 string.Format("Banka işlemi başarısız. Hata kodu: {0}", _result.ResponseCode));
                             return this;
                         }
+                        #region GetReceiptTotal
+                        ReceiptTotal rTotal = new ReceiptTotal();
+                        TryGetReceiptTotal();
+                        Func<string> func2 = () =>
+                        {
+                            if(string.IsNullOrEmpty(_result.Amount))
+                                return null;
+                            if(!(int.Parse(_result.Amount).ToString() == "0"))
+                                return int.Parse(_result.Amount).ToString();
+                            return null;
+                        };
+                        if(_result.PaymentSummryCnt.Equals(0))
+                        {
+                            rTotal.ToplamTutar = func2();
+                        }
+                        else
+                        {
+                            int num = _result.PaymentSummary.Where(payment => !string.IsNullOrEmpty(payment.Amount))
+                                .Sum(payment => int.Parse(payment.Amount));
+                            rTotal.ToplamOdenenTutar = num.ToString();
+                            rTotal.ToplamTutar = func2();
+                            rTotal.KalanTutar = Convert.ToString(Convert.ToInt32(rTotal.ToplamTutar) - Convert.ToInt32(rTotal.ToplamOdenenTutar));
+                            rTotal.OdenenTutar = requestMembers.Amount.TrimStart('0');
+                            rTotal.Aciklama = "Para üstü yok";
+                            if(Convert.ToInt32(rTotal.OdenenTutar) > Convert.ToInt32(rTotal.KalanTutar)&& Convert.ToInt32(rTotal.KalanTutar)==0)
+                            {
+                                rTotal.Aciklama = "Para Üstü Var";
+                            }
+                        }
+                        #endregion GetReceiptTotal
 
-                        Helpers.Conditional.SetSuccessInformation(ref _processInformation);
+                        Helpers.Conditional.SetSuccessInformation(ref _processInformation,rTotal);
                     }
                 }
                 else

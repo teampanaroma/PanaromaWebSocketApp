@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Panaroma.OKC.Integration.Library;
 using System;
 using System.ComponentModel;
 using System.Configuration;
@@ -125,11 +126,12 @@ namespace Panaroma.Communication.Application
                         {
                             if(String.IsNullOrWhiteSpace(t))
                                 return;
-                            if(t == oldValue)
-                            {
-                                    return;
-                            }
-                            oldValue = t;
+                            //if(t == oldValue)
+                            //{
+                            //        return;
+                            //}
+                            //oldValue = t;
+
                             if(t == okccmd)
                             {
                                 return;
@@ -735,7 +737,7 @@ namespace Panaroma.Communication.Application
                 new Action(delegate () { _textBox.Focus(); }));
             _textBox.ToolTip = "Sol alttaki bildirim ekranı süresini belirler.";
             _label.Content = "Bildirim Süresi";
-            _textBox.Text = ConfigurationManager.AppSettings["BildirimSuresi"];
+            _textBox.Text = ConfigReader.GetAppSettingString("BildirimSuresi", "");
             _label.Visibility = Visibility.Visible;
             _textBox.Visibility = Visibility.Visible;
             GridMenu.Visibility = Visibility.Hidden;
@@ -746,7 +748,7 @@ namespace Panaroma.Communication.Application
         {
             if(e.Key == Key.Enter)
             {
-                if(_textBox.Text != ConfigurationManager.AppSettings["BildirimSuresi"])
+                if(_textBox.Text != ConfigReader.GetAppSettingString("BildirimSuresi", "")) //ConfigurationManager.AppSettings["BildirimSuresi"])
                 {
                     if(MessageBox.Show(_textBox.Text + ": Bildirim süresi değiştirilsin mi?",
                             "Bildirim Süresi Değişikliği",
