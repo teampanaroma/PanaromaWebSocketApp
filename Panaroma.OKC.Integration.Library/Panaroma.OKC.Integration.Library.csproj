@@ -68,6 +68,7 @@
     <Compile Include="OKCConfiguration.cs" />
     <Compile Include="OKCConfigurationFactory.cs" />
     <Compile Include="OKCStatus.cs" />
+    <Compile Include="PairResult.cs" />
     <Compile Include="PCPOSOKCException.cs" />
     <Compile Include="ProcessInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

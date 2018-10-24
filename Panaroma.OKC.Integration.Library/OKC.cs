@@ -222,11 +222,24 @@ namespace Panaroma.OKC.Integration.Library
 
         public OKC TryGMP3Pair()
         {
+            if(!CheckGmp3PairStatus())
+                return this;
+
             try
             {
                 MethodInit(Request, "TryGMP3Pair");
                 _ecrInterface.SendCmd2ECR(Tags.msgREQ_GMP3Pair, new Members(), ref _result);
-                SetApplicationResult(-100, _result);
+                SetApplicationResult(-100, new PairResult()
+                {
+                    Df02TraceNo = _result.groupDF02.TraceNo,
+                    Df02TranDate=_result.groupDF02.TranDate,
+                    Df02TranTime=_result.groupDF02.TranTime,
+                    Df6FErrRespCode=_result.groupDF6F.ErrRespCode,
+                    ErrRespCodeResult=_result.groupDF6F.status,
+                    Df6FExtDevIndex=_result.groupDF6F.ExtDevIndex,
+                    Df5KeyInvalidationCnt=_result.groupDF6F.keyInvalidationCnt,
+                    KencKcv=_result.groupDF6F.Kcv
+                });
                 //Thread.Sleep(3000);
             }
             catch(Exception ex)
@@ -642,6 +655,11 @@ namespace Panaroma.OKC.Integration.Library
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("Ödeme işleminde {0} dolu olmalıdır.", "Amount"));
                     return this;
+                }
+                if(requestMembers.ExcRate.Length>0)
+                {
+                    Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
+                        string.Format("Dövizli ödeme işlemlerinde {0} dolu olmalıdır.", "Amount"));
                 }
 
                 if(requestMembers.ProcessType != null)
@@ -1689,6 +1707,16 @@ namespace Panaroma.OKC.Integration.Library
         private bool CheckOkcConnection()
         {
             TryPing();
+            if(!string.IsNullOrEmpty(_result.InternalErrNum) && _result.InternalErrNum.Equals("0"))
+                return true;
+            ApplicationInit(false);
+            if(!string.IsNullOrEmpty(_result.InternalErrNum))
+                return _result.InternalErrNum.Equals("0");
+            return false;
+        }
+        public bool CheckGmp3PairStatus()
+        {
+            TryGMP3Echo();
             if(!string.IsNullOrEmpty(_result.InternalErrNum) && _result.InternalErrNum.Equals("0"))
                 return true;
             ApplicationInit(false);

@@ -185,7 +185,7 @@ namespace Panaroma.Communication.Application
         {
             ShowInTaskbar = true;
             lblVersionInfo.Content = "Version: " + getRunningVersion().Major + "." + getRunningVersion().MajorRevision +
-                                     "." + getRunningVersion().Build + "." + " Release_180928-1709";
+                                     "." + getRunningVersion().Build + "." + " Release_181015-1200";
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ToolTip = "Bu Program WebSocket teknolojisi veya ClipBoard ile haberleşme yapar. Yalnızca Json Formatı ile habeleşme kurar.";
@@ -651,7 +651,7 @@ namespace Panaroma.Communication.Application
                                                                                                 .MajorRevision + "." +
                                                                                             getRunningVersion().Build +
                                                                                             "." +
-                                                                                            " Release_180815-56",
+                                                                                            " Release_181015-1200",
                 "Hakkında", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK,
                 MessageBoxOptions.RightAlign);
         }

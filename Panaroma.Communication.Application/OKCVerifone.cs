@@ -52,7 +52,7 @@ namespace Panaroma.Communication.Application
             WorkerExceptionHandle workerExceptionHandle = null;
             try
             {
-                SetLogger();
+               // SetLogger();
                 OKCParameters oKCParameter = JsonConvert.DeserializeObject<OKCParameters>(TcpCommand.Content);
                 OKCProcesses.Start(ref _okcProcesseses, TcpCommand, oKCParameter);
                 string type = oKCParameter.Type;
@@ -476,6 +476,8 @@ namespace Panaroma.Communication.Application
 
         public void TryGMP3Pair()
         {
+            if(_okc.CheckGmp3PairStatus())
+                return;
             _okc.TryConnectToEthernet();
             if(_okc.ProcessInformation.HasError)
                 return;
