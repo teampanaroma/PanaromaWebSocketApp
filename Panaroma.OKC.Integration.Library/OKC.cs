@@ -656,7 +656,7 @@ namespace Panaroma.OKC.Integration.Library
                         string.Format("Ödeme işleminde {0} dolu olmalıdır.", "Amount"));
                     return this;
                 }
-                if(requestMembers.ExcRate.Length>0)
+                if(string.IsNullOrEmpty( requestMembers.ExcRate))
                 {
                     Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
                         string.Format("Dövizli ödeme işlemlerinde {0} dolu olmalıdır.", "Amount"));
