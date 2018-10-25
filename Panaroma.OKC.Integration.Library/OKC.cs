@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace Panaroma.OKC.Integration.Library
 {
@@ -656,12 +655,15 @@ namespace Panaroma.OKC.Integration.Library
                         string.Format("Ödeme işleminde {0} dolu olmalıdır.", "Amount"));
                     return this;
                 }
-                if(string.IsNullOrEmpty( requestMembers.ExcRate))
-                {
-                    Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
-                        string.Format("Dövizli ödeme işlemlerinde {0} dolu olmalıdır.", "Amount"));
-                }
 
+                if(requestMembers.PaymentType.Equals("03"))
+                {
+                    if(string.IsNullOrEmpty(requestMembers.ExcRate))
+                    {
+                        Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
+                            string.Format("Dövizli ödeme işlemlerinde {0} dolu olmalıdır.", "Amount"));
+                    }
+                }
                 if(requestMembers.ProcessType != null)
                 {
                     if(requestMembers.ProcessType.Equals("30") || requestMembers.ProcessType.Equals("50"))

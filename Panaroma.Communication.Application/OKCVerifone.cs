@@ -52,7 +52,7 @@ namespace Panaroma.Communication.Application
             WorkerExceptionHandle workerExceptionHandle = null;
             try
             {
-               // SetLogger();
+                SetLogger();
                 OKCParameters oKCParameter = JsonConvert.DeserializeObject<OKCParameters>(TcpCommand.Content);
                 OKCProcesses.Start(ref _okcProcesseses, TcpCommand, oKCParameter);
                 string type = oKCParameter.Type;
