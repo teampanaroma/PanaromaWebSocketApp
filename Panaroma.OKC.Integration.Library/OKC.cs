@@ -208,7 +208,6 @@ namespace Panaroma.OKC.Integration.Library
                 else
                 {
                     Helpers.Conditional.SetSuccessInformation(ref _processInformation);
-                   // Thread.Sleep(1000);
                 }
             }
             catch(Exception ex)
@@ -231,15 +230,14 @@ namespace Panaroma.OKC.Integration.Library
                 SetApplicationResult(-100, new PairResult()
                 {
                     Df02TraceNo = _result.groupDF02.TraceNo,
-                    Df02TranDate=_result.groupDF02.TranDate,
-                    Df02TranTime=_result.groupDF02.TranTime,
-                    Df6FErrRespCode=_result.groupDF6F.ErrRespCode,
-                    ErrRespCodeResult=_result.groupDF6F.status,
-                    Df6FExtDevIndex=_result.groupDF6F.ExtDevIndex,
-                    Df5KeyInvalidationCnt=_result.groupDF6F.keyInvalidationCnt,
-                    KencKcv=_result.groupDF6F.Kcv
+                    Df02TranDate = _result.groupDF02.TranDate,
+                    Df02TranTime = _result.groupDF02.TranTime,
+                    Df6FErrRespCode = _result.groupDF6F.ErrRespCode,
+                    ErrRespCodeResult = _result.groupDF6F.status,
+                    Df6FExtDevIndex = _result.groupDF6F.ExtDevIndex,
+                    Df5KeyInvalidationCnt = _result.groupDF6F.keyInvalidationCnt,
+                    KencKcv = _result.groupDF6F.Kcv
                 });
-                //Thread.Sleep(3000);
             }
             catch(Exception ex)
             {
@@ -750,7 +748,9 @@ namespace Panaroma.OKC.Integration.Library
                                 string.Format("Banka işlemi başarısız. Hata kodu: {0}", _result.ResponseCode));
                             return this;
                         }
+
                         #region GetReceiptTotal
+
                         ReceiptTotal rTotal = new ReceiptTotal();
                         TryGetReceiptTotal();
                         Func<string> func2 = () =>
@@ -774,14 +774,15 @@ namespace Panaroma.OKC.Integration.Library
                             rTotal.KalanTutar = Convert.ToString(Convert.ToInt32(rTotal.ToplamTutar) - Convert.ToInt32(rTotal.ToplamOdenenTutar));
                             rTotal.OdenenTutar = requestMembers.Amount.TrimStart('0');
                             rTotal.Aciklama = "Para üstü yok";
-                            if(Convert.ToInt32(rTotal.OdenenTutar) > Convert.ToInt32(rTotal.KalanTutar)&& Convert.ToInt32(rTotal.KalanTutar)==0)
+                            if(Convert.ToInt32(rTotal.OdenenTutar) > Convert.ToInt32(rTotal.KalanTutar) && Convert.ToInt32(rTotal.KalanTutar) == 0)
                             {
                                 rTotal.Aciklama = "Para Üstü Var";
                             }
                         }
+
                         #endregion GetReceiptTotal
 
-                        Helpers.Conditional.SetSuccessInformation(ref _processInformation,rTotal);
+                        Helpers.Conditional.SetSuccessInformation(ref _processInformation, rTotal);
                     }
                 }
                 else
@@ -1716,6 +1717,7 @@ namespace Panaroma.OKC.Integration.Library
                 return _result.InternalErrNum.Equals("0");
             return false;
         }
+
         public bool CheckGmp3PairStatus()
         {
             TryGMP3Echo();

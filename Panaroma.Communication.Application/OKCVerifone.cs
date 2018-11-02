@@ -53,6 +53,7 @@ namespace Panaroma.Communication.Application
             try
             {
                 SetLogger();
+                SetSalesLogStat(true);
                 OKCParameters oKCParameter = JsonConvert.DeserializeObject<OKCParameters>(TcpCommand.Content);
                 OKCProcesses.Start(ref _okcProcesseses, TcpCommand, oKCParameter);
                 string type = oKCParameter.Type;
@@ -266,6 +267,9 @@ namespace Panaroma.Communication.Application
             SetEcrConfig();
             _requestMembers = JsonConvert.DeserializeObject<Members>(okcParameters.Content);
             _okc.TryReceiptBegin(_requestMembers);
+            //Helpers.FolderHelper.dosyaYaz("Döküman Tipi: " + _requestMembers.DocumentType, null);
+            SalesLog.Write("----FİŞ BAŞLATILDI----");
+            SalesLog.Write(string.Concat("Döküman Tipi:  ", string.Format("{0:d2}", _requestMembers.DocumentType)), new object[0]);
         }
 
         public void TryDoTransaction(OKCParameters okcparameters)
@@ -274,6 +278,7 @@ namespace Panaroma.Communication.Application
                 return;
             _requestMembers = JsonConvert.DeserializeObject<Members>(okcparameters.Content);
             _okc.TryDoTransaction(_requestMembers);
+            SalesLog.Write(_requestMembers.ItemName,_requestMembers.Amount,_requestMembers.DepartmentId);
         }
 
         public void TryDoBatchTransaction(OKCParameters okcParameters)
@@ -387,13 +392,21 @@ namespace Panaroma.Communication.Application
                 return;
             _requestMembers = JsonConvert.DeserializeObject<Members>(okcParameters.Content);
             _okc.TryDoPayment(_requestMembers);
+            OKCSaleReport okcSale = new OKCSaleReport()
+            {
+                PaymentType = _requestMembers.PaymentType,
+                Amount = _requestMembers.Amount,
+            };
+            Helpers.FolderHelper.dosyaYaz("Ödeme Tipi: " + okcSale.PaymentType, "Tutar: " + okcSale.Amount);
         }
+
         public void TryGetReceiptTotal()
         {
             if(!PrepareSaleOrAdmin(EcrModeType.SALE))
                 return;
             _okc.TryGetReceiptTotal();
         }
+
         public void TryReceiptEnd()
         {
             if(!PrepareSaleOrAdmin(EcrModeType.SALE))
@@ -654,6 +667,16 @@ namespace Panaroma.Communication.Application
                     IsDisableSalesScreenTimeout = true
                 }
             });
+        }
+
+        public void SetSalesLogStat(bool EnableStat, string strLogPath = "SalesLogs")
+        {
+            SalesLog.LogEnable = EnableStat;
+            if(!SalesLog.LogEnable)
+                return;
+            SalesLog.SetLogPath(strLogPath);
+            SalesLog.CloseLogFile();
+            SalesLog.OpenLogFile();
         }
 
         private static void SetLogger()

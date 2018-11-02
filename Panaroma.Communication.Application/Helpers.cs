@@ -292,6 +292,25 @@ namespace Panaroma.Communication.Application
                     return;
                 Directory.CreateDirectory(path);
             }
+            public static void dosyaYaz(string object1, string object2)
+            {
+                string directory = Directory.GetCurrentDirectory();
+                string dosya_yolu = directory+@"\PanaromaPayment.txt";
+                if(!File.Exists(dosya_yolu))
+                {
+                    File.Create(dosya_yolu);
+                }
+
+                StreamWriter sw = File.AppendText(dosya_yolu);
+                sw.WriteLine();
+                sw.WriteLine("*----------------------------------*");
+                sw.WriteLine("İşlem Tarihi: "+DateTime.Now);
+                sw.WriteLine(object1);
+                sw.WriteLine(object2);
+                sw.WriteLine("*----------------------------------*");
+                sw.Flush();
+                sw.Close();
+            }
         }
 
         public static class FileHelper

@@ -124,7 +124,6 @@ namespace Panaroma.OKC.Integration.Library
         OKC TryGetOKCStatus();
 
         OKC TryGetUniqueId();
-
         void TrySetLogStat(string path = null);
 
         void SetDefaultProcessInformationAndMembers();

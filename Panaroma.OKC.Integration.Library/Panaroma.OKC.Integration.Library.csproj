@@ -57,6 +57,7 @@
     <Compile Include="EcrModeType.cs" />
     <Compile Include="EthernetConfiguration.cs" />
     <Compile Include="EthernetConnectionException.cs" />
+    <Compile Include="SalesLog.cs" />
     <Compile Include="FreeText.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="HybridMembers.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="OKC.cs" />
     <Compile Include="OKCConfiguration.cs" />
     <Compile Include="OKCConfigurationFactory.cs" />
+    <Compile Include="OKCSaleReport.cs" />
     <Compile Include="OKCStatus.cs" />
     <Compile Include="PairResult.cs" />
     <Compile Include="PCPOSOKCException.cs" />

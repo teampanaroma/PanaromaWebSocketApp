@@ -109,7 +109,6 @@ namespace Panaroma.OKC.Integration.Library
                 return string.Empty;
             }
         }
-
         private static class ConstValueHelper
         {
             private const int BarcodeLength = 13;
