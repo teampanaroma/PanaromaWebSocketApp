@@ -268,8 +268,8 @@ namespace Panaroma.Communication.Application
             _requestMembers = JsonConvert.DeserializeObject<Members>(okcParameters.Content);
             _okc.TryReceiptBegin(_requestMembers);
             //Helpers.FolderHelper.dosyaYaz("Döküman Tipi: " + _requestMembers.DocumentType, null);
-            SalesLog.Write("----FİŞ BAŞLATILDI----");
-            SalesLog.Write(string.Concat("Döküman Tipi:  ", string.Format("{0:d2}", _requestMembers.DocumentType)), new object[0]);
+            //SalesLog.Write("----FİŞ BAŞLATILDI----");
+           // SalesLog.Write(string.Concat("Döküman Tipi:  ", string.Format("{0:d2}", _requestMembers.DocumentType)), new object[0]);
         }
 
         public void TryDoTransaction(OKCParameters okcparameters)
@@ -397,7 +397,7 @@ namespace Panaroma.Communication.Application
                 PaymentType = _requestMembers.PaymentType,
                 Amount = _requestMembers.Amount,
             };
-            Helpers.FolderHelper.dosyaYaz("Ödeme Tipi: " + okcSale.PaymentType, "Tutar: " + okcSale.Amount);
+           // Helpers.FolderHelper.dosyaYaz("Ödeme Tipi: " + okcSale.PaymentType, "Tutar: " + okcSale.Amount);
         }
 
         public void TryGetReceiptTotal()

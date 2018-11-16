@@ -37,45 +37,68 @@ namespace Panaroma.Communication.Application
 
         private const uint GHND = 0x0042;
 
-        public static string GetText()
+        //public static string GetText()
+        //{
+        //    if(!IsClipboardFormatAvailable(CF_UNICODETEXT))
+        //        return null;
+
+        //    try
+        //    {
+        //        if(!OpenClipboard(IntPtr.Zero))
+        //            return null;
+
+        //        IntPtr handle = GetClipboardData(CF_UNICODETEXT);
+        //        if(handle == IntPtr.Zero)
+        //            return null;
+
+        //        IntPtr pointer = IntPtr.Zero;
+
+        //        try
+        //        {
+        //            pointer = Win32MemoryAPI.GlobalLock(handle);
+        //            if(pointer == IntPtr.Zero)
+        //                return null;
+
+        //            int size = Win32MemoryAPI.GlobalSize(handle);
+        //            byte[] buff = new byte[size];
+
+        //            Marshal.Copy(pointer, buff, 0, size);
+
+        //            return Encoding.Unicode.GetString(buff).TrimEnd('\0');
+        //        }
+        //        finally
+        //        {
+        //            if(pointer != IntPtr.Zero)
+        //                Win32MemoryAPI.GlobalUnlock(handle);
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        CloseClipboard();
+        //    }
+        //}
+
+        public static string GetText2()
         {
             if(!IsClipboardFormatAvailable(CF_UNICODETEXT))
                 return null;
+            if(!OpenClipboard(IntPtr.Zero))
+                return null;
 
-            try
+            string data = null;
+            var hGlobal = GetClipboardData(CF_UNICODETEXT);
+            if(hGlobal != IntPtr.Zero)
             {
-                if(!OpenClipboard(IntPtr.Zero))
-                    return null;
-
-                IntPtr handle = GetClipboardData(CF_UNICODETEXT);
-                if(handle == IntPtr.Zero)
-                    return null;
-
-                IntPtr pointer = IntPtr.Zero;
-
-                try
+                var lpwcstr = Win32MemoryAPI.GlobalLock(hGlobal);
+                if(lpwcstr != IntPtr.Zero)
                 {
-                    pointer = Win32MemoryAPI.GlobalLock(handle);
-                    if(pointer == IntPtr.Zero)
-                        return null;
-
-                    int size = Win32MemoryAPI.GlobalSize(handle);
-                    byte[] buff = new byte[size];
-
-                    Marshal.Copy(pointer, buff, 0, size);
-
-                    return Encoding.Unicode.GetString(buff).TrimEnd('\0');
-                }
-                finally
-                {
-                    if(pointer != IntPtr.Zero)
-                        Win32MemoryAPI.GlobalUnlock(handle);
+                    data = Marshal.PtrToStringUni(lpwcstr);
+                    Win32MemoryAPI.GlobalUnlock(lpwcstr);
                 }
             }
-            finally
-            {
-                CloseClipboard();
-            }
+            CloseClipboard();
+
+            return data;
         }
 
         public static bool IsFree()
@@ -123,6 +146,7 @@ namespace Panaroma.Communication.Application
                 finally
                 {
                     Win32MemoryAPI.GlobalUnlock(handle);
+                    CloseClipboard();
                 }
             }
             finally

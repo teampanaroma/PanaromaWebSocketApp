@@ -1949,64 +1949,82 @@ namespace Panaroma.OKC.Integration.Library
         {
             MethodInit(requestMembers, "TryPrintFinancalZDetailReportWithDateTime");
             if(!CheckOkcConnection())
+            {
                 return this;
-            if(requestMembers.StartDate.Length != 0 && requestMembers.EndDate.Length != 0)
-                return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_Z_DTL_DD));
-            Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
-                "StartDate veya EndDate alanları boş olamaz.");
-            return this;
+            }
+            if(requestMembers.StartDate.Length == 0 || requestMembers.EndDate.Length == 0)
+            {
+                Helpers.Conditional.SetCustomWarningInformation(ref _processInformation, "StartDate veya EndDate alanları boş olamaz.");
+                return this;
+            }
+            return TryPrintReport(requestMembers, string.Format("{0:x3}", 4194561));
         }
 
         public OKC TryPrintFinancalZDetailReportWithZNo(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintFinancalZDetailReportWithZNo");
             if(!CheckOkcConnection())
+            {
                 return this;
-            if(requestMembers.StartZNo.Length != 0 && requestMembers.EndZNo.Length != 0)
-                return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_Z_DTL_ZZ));
-            Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
-                "StartZNo,EndZNo, alanları boş olamaz.");
-            return this;
+            }
+            if(requestMembers.StartZNo.Length == 0 || requestMembers.EndZNo.Length == 0)
+            {
+                Helpers.Conditional.SetCustomWarningInformation(ref this._processInformation, "StartZNo,EndZNo, alanları boş olamaz.");
+                return this;
+            }
+            return TryPrintReport(requestMembers, string.Format("{0:x3}", 4194565));
         }
 
         public OKC TryPrintFinancalZReportWithDateTime(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintFinancalZReportWithDateTime");
             if(!CheckOkcConnection())
+            {
                 return this;
-            if(requestMembers.StartDate.Length != 0 && requestMembers.EndDate.Length != 0)
-                return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_Z_SMRY_DD));
-            Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
-                "StartDate veya EndDate alanları boş olamaz.");
-            return this;
+            }
+            if(requestMembers.StartDate.Length == 0 || requestMembers.EndDate.Length == 0)
+            {
+                Helpers.Conditional.SetCustomWarningInformation(ref _processInformation, "StartDate veya EndDate alanları boş olamaz.");
+                return this;
+            }
+            return TryPrintReport(requestMembers, string.Format("{0:x3}", 4194817));
         }
 
         public OKC TryPrintFinancalZReportWithZNo(Members requestMembers)
         {
             MethodInit(requestMembers, "TryPrintFinancalZReportWithZNo");
             if(!CheckOkcConnection())
+            {
                 return this;
-            if(requestMembers.StartZNo.Length != 0 && requestMembers.EndZNo.Length != 0)
-                return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_Z_SMRY_ZZ));
-            Helpers.Conditional.SetCustomWarningInformation(ref _processInformation,
-                "StartZNo,EndZNo, alanları boş olamaz.");
-            return this;
+            }
+            if(requestMembers.StartZNo.Length == 0 || requestMembers.EndZNo.Length == 0)
+            {
+                Helpers.Conditional.SetCustomWarningInformation(ref _processInformation, "StartZNo,EndZNo, alanları boş olamaz.");
+                return this;
+            }
+            return TryPrintReport(requestMembers, string.Format("{0:x3}", 4194821));
         }
 
         public OKC TryPrintLastSaleReceiptCopy()
         {
             MethodInit(Request, "TryPrintLastSaleReceiptCopy");
             if(!CheckOkcConnection())
-                return TryPrintReport(new Members(), string.Format("{0:x3}", ECR_RPRT_TYPS.EJ_R_SNGL_CPY_LASTSALE));
-            return this;
+            {
+                return this;
+            }
+            Members member = new Members();
+            return TryPrintReport(member, string.Format("{0:x3}", 3411974));
         }
 
         public OKC TryPrintSalesReportWihtZNo(Members requestMembers)
         {
-            MethodInit(requestMembers, "TryPrintSalesReportWihtZNo");
+            MethodInit(Request, "TryPrintLastZReportCopy");
             if(!CheckOkcConnection())
-                return TryPrintReport(requestMembers, string.Format("{0:x3}", ECR_RPRT_TYPS.FM_SALE_Z));
-            return this;
+            {
+                return this;
+            }
+            Members member = new Members();
+            return TryPrintReport(member, string.Format("{0:x3}", 2097184));
         }
 
         public OKC TryPrintBankEOD()

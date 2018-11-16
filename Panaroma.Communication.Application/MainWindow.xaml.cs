@@ -68,7 +68,8 @@ namespace Panaroma.Communication.Application
             #endregion ProcessTypeClipBoard
 
             #region NetworkComminucation
-            else if(ConfigurationManager.AppSettings["ProcessType"]=="3")
+
+            else if(ConfigurationManager.AppSettings["ProcessType"] == "3")
             {
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "ClipBoard";
                 InitializeComponent();
@@ -79,7 +80,8 @@ namespace Panaroma.Communication.Application
                 _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
                 _dataGridError = GetDefaultDataGrid(DataGridType.Error);
             }
-            #endregion
+
+            #endregion NetworkComminucation
 
             #region ProcessTypeNone
 
@@ -117,7 +119,7 @@ namespace Panaroma.Communication.Application
             {
                 try
                 {
-                    string t = Win32ClipboardAPI.GetText().Trim();
+                    string t = Win32ClipboardAPI.GetText2().Trim();
                     bool request = t.StartsWith("#okccmd#");
                     bool response = t.StartsWith("#okcres#");
                     if(!response == true)
@@ -126,12 +128,6 @@ namespace Panaroma.Communication.Application
                         {
                             if(String.IsNullOrWhiteSpace(t))
                                 return;
-                            //if(t == oldValue)
-                            //{
-                            //        return;
-                            //}
-                            //oldValue = t;
-
                             if(t == okccmd)
                             {
                                 return;
@@ -176,6 +172,7 @@ namespace Panaroma.Communication.Application
                     new Action(() => (new NotificationWindow(NotificationType.Error, "Hata ",
                     "ClipBoard Açılamadı Yeniden Başlatılıyor....", Helpers.DateTimeHelper.GetDateTime()))
                     .Build().Show()), Array.Empty<object>());
+
                     App.AllowMultipleApplication(true);
                 }
             }
@@ -185,7 +182,7 @@ namespace Panaroma.Communication.Application
         {
             ShowInTaskbar = true;
             lblVersionInfo.Content = "Version: " + getRunningVersion().Major + "." + getRunningVersion().MajorRevision +
-                                     "." + getRunningVersion().Build + "." + " Release_181015-1200";
+                                     "." + getRunningVersion().Build + "." + " Release_181115-1415";
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ToolTip = "Bu Program WebSocket teknolojisi veya ClipBoard ile haberleşme yapar. Yalnızca Json Formatı ile habeleşme kurar.";
@@ -329,8 +326,6 @@ namespace Panaroma.Communication.Application
                 StackPanelWarningLine.Background = Brushes.Transparent;
             }
         }
-
-        private string oldValue = null;
 
         private void Panaroma_OnMessageChanged(WebSocketEventArgs e)
         {
@@ -651,7 +646,7 @@ namespace Panaroma.Communication.Application
                                                                                                 .MajorRevision + "." +
                                                                                             getRunningVersion().Build +
                                                                                             "." +
-                                                                                            " Release_181015-1200",
+                                                                                            " Release_181115-1415",
                 "Hakkında", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK,
                 MessageBoxOptions.RightAlign);
         }
