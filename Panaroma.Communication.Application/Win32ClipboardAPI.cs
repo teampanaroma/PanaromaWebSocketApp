@@ -37,49 +37,53 @@ namespace Panaroma.Communication.Application
 
         private const uint GHND = 0x0042;
 
-        //public static string GetText()
-        //{
-        //    if(!IsClipboardFormatAvailable(CF_UNICODETEXT))
-        //        return null;
+        public static string GetText()
+        {
+            if(!IsFree())
+                return "Müsait değil....";
+            if(!IsClipboardFormatAvailable(CF_UNICODETEXT))
+                return "Format Uygun Değil";
 
-        //    try
-        //    {
-        //        if(!OpenClipboard(IntPtr.Zero))
-        //            return null;
+            try
+            {
+                if(!OpenClipboard(IntPtr.Zero))
+                    return null;
 
-        //        IntPtr handle = GetClipboardData(CF_UNICODETEXT);
-        //        if(handle == IntPtr.Zero)
-        //            return null;
+                IntPtr handle = GetClipboardData(CF_UNICODETEXT);
+                if(handle == IntPtr.Zero)
+                    return null;
 
-        //        IntPtr pointer = IntPtr.Zero;
+                IntPtr pointer = IntPtr.Zero;
 
-        //        try
-        //        {
-        //            pointer = Win32MemoryAPI.GlobalLock(handle);
-        //            if(pointer == IntPtr.Zero)
-        //                return null;
+                try
+                {
+                    pointer = Win32MemoryAPI.GlobalLock(handle);
+                    if(pointer == IntPtr.Zero)
+                        return null;
 
-        //            int size = Win32MemoryAPI.GlobalSize(handle);
-        //            byte[] buff = new byte[size];
+                    int size = Win32MemoryAPI.GlobalSize(handle);
+                    byte[] buff = new byte[size];
 
-        //            Marshal.Copy(pointer, buff, 0, size);
+                    Marshal.Copy(pointer, buff, 0, size);
 
-        //            return Encoding.Unicode.GetString(buff).TrimEnd('\0');
-        //        }
-        //        finally
-        //        {
-        //            if(pointer != IntPtr.Zero)
-        //                Win32MemoryAPI.GlobalUnlock(handle);
-        //        }
-        //    }
-        //    finally
-        //    {
-        //        CloseClipboard();
-        //    }
-        //}
+                    return Encoding.Unicode.GetString(buff).TrimEnd('\0');
+                }
+                finally
+                {
+                    if(pointer != IntPtr.Zero)
+                        Win32MemoryAPI.GlobalUnlock(handle);
+                }
+            }
+            finally
+            {
+                CloseClipboard();
+            }
+        }
 
         public static string GetText2()
         {
+            if(!IsFree())
+                return "Bellek Müsait değil";
             if(!IsClipboardFormatAvailable(CF_UNICODETEXT))
                 return null;
             if(!OpenClipboard(IntPtr.Zero))

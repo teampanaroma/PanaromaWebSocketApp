@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panaroma.Communication.Appl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panaroma.OKC.Integration.Library", "Panaroma.OKC.Integration.Library\Panaroma.OKC.Integration.Library.csproj", "{B59B6604-E330-4AB7-9176-630FA2B0674E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Panaroma.Update.Helper", "Panaroma.Update.Helper\Panaroma.Update.Helper.csproj", "{1199276E-176F-4E34-89B1-0E9F00D09B98}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationUpdater", "ApplicationUpdater\ApplicationUpdater.csproj", "{79D0A827-521C-4F38-B2A4-0BCB3B52ABD7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,14 +21,6 @@ Global
 		{B59B6604-E330-4AB7-9176-630FA2B0674E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B59B6604-E330-4AB7-9176-630FA2B0674E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B59B6604-E330-4AB7-9176-630FA2B0674E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1199276E-176F-4E34-89B1-0E9F00D09B98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1199276E-176F-4E34-89B1-0E9F00D09B98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1199276E-176F-4E34-89B1-0E9F00D09B98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1199276E-176F-4E34-89B1-0E9F00D09B98}.Release|Any CPU.Build.0 = Release|Any CPU
-		{79D0A827-521C-4F38-B2A4-0BCB3B52ABD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{79D0A827-521C-4F38-B2A4-0BCB3B52ABD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{79D0A827-521C-4F38-B2A4-0BCB3B52ABD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{79D0A827-521C-4F38-B2A4-0BCB3B52ABD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,6 +20,10 @@ namespace Panaroma.Communication.Application
 {
     public partial class MainWindow : Window, IComponentConnector
     {
+        private System.Windows.Forms.NotifyIcon notifyIcon = new System.Windows.Forms.NotifyIcon();
+        private System.Windows.Forms.ContextMenu notifyIconContexMenu = new System.Windows.Forms.ContextMenu();
+        private System.Windows.Forms.MenuItem menuItem = new System.Windows.Forms.MenuItem();
+
         private WebSocketServer _panaromaWebSocketServer;
         private bool _isSuccessMouseDown;
         private bool _isErrorMouseDown;
@@ -55,6 +59,7 @@ namespace Panaroma.Communication.Application
 
             else if(ConfigurationManager.AppSettings["ProcessType"] == "2")
             {
+                Clipboard.Clear();
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "ClipBoard";
                 InitializeComponent();
                 MainWindowProperty();
@@ -63,6 +68,16 @@ namespace Panaroma.Communication.Application
                 _dataGridWarning = GetDefaultDataGrid(DataGridType.Warning);
                 _dataGridSuccess = GetDefaultDataGrid(DataGridType.Success);
                 _dataGridError = GetDefaultDataGrid(DataGridType.Error);
+
+                notifyIcon.Icon = new System.Drawing.Icon("Html.ico");
+                notifyIcon.Visible = false;
+                notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(notifyIcon_Click);
+                notifyIcon.DoubleClick += new System.EventHandler(notifyIcon1_DoubleClick);
+                notifyIconContexMenu.MenuItems.Add("Uygulamayı Aç", new EventHandler(Open));
+                notifyIconContexMenu.MenuItems.Add("Uygulamayı Kapat", new EventHandler(Close));
+                notifyIconContexMenu.MenuItems.Add("Uygulama Hakkında", new EventHandler(About));
+                notifyIcon.ContextMenu = notifyIconContexMenu;
+                notifyIcon.Text = "Haberleşme Uygulaması";
             }
 
             #endregion ProcessTypeClipBoard
@@ -105,6 +120,77 @@ namespace Panaroma.Communication.Application
             #endregion ProcessTypeNone
         }
 
+        private void notifyIcon1_DoubleClick(object Sender, EventArgs e)
+        {
+            if(WindowState == WindowState.Minimized)
+                WindowState = WindowState.Normal;
+
+            Activate();
+            ShowInTaskbar = true;
+            notifyIcon.Visible = false;
+        }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            if(WindowState == WindowState.Minimized)
+            {
+                Hide();
+            }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            notifyIcon.Visible = false;
+            notifyIcon.Dispose();
+        }
+
+        private void Open(object sender, EventArgs e)
+        {
+            if(WindowState == WindowState.Minimized)
+                WindowState = WindowState.Normal;
+            Activate();
+            Show();
+            notifyIcon.Visible = false;
+            ShowInTaskbar = true;
+        }
+
+        public void About()
+        {
+            MessageBox.Show(
+    "Bu Program Panaroma Bilişim için geliştirilmiştir.\nTüm Hakları Saklıdır." + "\n http://www.pbt.com.tr/"
+                                                                                + "\n" + "Version: " +
+                                                                                getRunningVersion().Major +
+                                                                                "." + getRunningVersion()
+                                                                                    .MajorRevision + "." +
+                                                                                getRunningVersion().Build +
+                                                                                "." +
+                                                                                " Release_181211-2324",
+    "Hakkında", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK,
+    MessageBoxOptions.RightAlign);
+        }
+
+        private void About(object sender, EventArgs e)
+        {
+            About();
+        }
+
+        private void Close(object sender, EventArgs e)
+        {
+            notifyIcon.Dispose();
+            if(MessageBox.Show("Yazar kasa ile bağlantınız kesilecek, onaylıyor musunuz?", "Uygulama kapanıyor", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK)
+                return;
+            _pleaseClose = true;
+            Close();
+        }
+
+        private void notifyIcon_Click(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if(e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                notifyIcon.ShowBalloonTip(1000, "Uygulama Bildirimi !!!", "Uygulama Buradan Çalıştırılamaz...", System.Windows.Forms.ToolTipIcon.Warning);
+            }
+        }
+
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
@@ -115,11 +201,11 @@ namespace Panaroma.Communication.Application
 
         private void ClipboardChanged(object sender, EventArgs e)
         {
-            if(Clipboard.ContainsText())
+            try
             {
-                try
+                if(Clipboard.ContainsText())
                 {
-                    string t = Win32ClipboardAPI.GetText2().Trim();
+                    string t = Clipboard.GetText();
                     bool request = t.StartsWith("#okccmd#");
                     bool response = t.StartsWith("#okcres#");
                     if(!response == true)
@@ -139,51 +225,47 @@ namespace Panaroma.Communication.Application
                             }
 
                             t = t.Substring(okccmd.Length);
-
                             try
                             {
-                                try
+
+                                (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
+                                string str =
+                                    PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
+                                        .GetInternalCommunication());
+                                Clipboard.SetText(okcres + str);
+                                if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
                                 {
-                                    (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
-                                    string str =
-                                        PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
-                                            .GetInternalCommunication());
-                                    Win32ClipboardAPI.SetText(okcres + str);
-                                    if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
-                                    {
-                                        AddLogToGrid(str);
-                                    }
+                                    AddLogToGrid(str);
                                 }
-                                catch(Exception exception)
-                                {
-                                    _catch(exception);
-                                }
+                            }
+                            catch(Exception exception)
+                            {
+                                _catch(exception);
                             }
                             finally
                             {
                                 _finally();
+
                             }
                         }
                     }
                 }
-                catch(Exception ex)
-                {
-                    Dispatcher.BeginInvoke(
-                    new Action(() => (new NotificationWindow(NotificationType.Error, "Hata ",
-                    "ClipBoard Açılamadı Yeniden Başlatılıyor....", Helpers.DateTimeHelper.GetDateTime()))
-                    .Build().Show()), Array.Empty<object>());
+            }
+            catch(Exception ex)
+            {
+                Dispatcher.BeginInvoke(
+                new Action(() => (new NotificationWindow(NotificationType.Error, "Hata ",
+                ex.Data.ToString(), Helpers.DateTimeHelper.GetDateTime()))
+                .Build().Show()), Array.Empty<object>());
 
-                    App.AllowMultipleApplication(true);
-                }
             }
         }
-
         private void MainWindowProperty()
         {
             ShowInTaskbar = true;
             lblVersionInfo.Content = "Version: " + getRunningVersion().Major + "." + getRunningVersion().MajorRevision +
-                                     "." + getRunningVersion().Build + "." + " Release_181115-1415";
-            ResizeMode = ResizeMode.NoResize;
+                                     "." + getRunningVersion().Build + "." + " Release_181211-2324";
+            ResizeMode = ResizeMode.CanMinimize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ToolTip = "Bu Program WebSocket teknolojisi veya ClipBoard ile haberleşme yapar. Yalnızca Json Formatı ile habeleşme kurar.";
         }
@@ -632,23 +714,14 @@ namespace Panaroma.Communication.Application
 
         private void Restart_OnClick(object sender, RoutedEventArgs e)
         {
+            notifyIcon.Visible = false;
             App.AllowMultipleApplication(true);
         }
 
         private void About_OnClick(object sender, RoutedEventArgs e)
         {
             VisibilityDefaultStatus();
-            MessageBox.Show(
-                "Bu Program Panaroma Bilişim için geliştirilmiştir.\nTüm Hakları Saklıdır." + "\n http://www.pbt.com.tr/"
-                                                                                            + "\n" + "Version: " +
-                                                                                            getRunningVersion().Major +
-                                                                                            "." + getRunningVersion()
-                                                                                                .MajorRevision + "." +
-                                                                                            getRunningVersion().Build +
-                                                                                            "." +
-                                                                                            " Release_181115-1415",
-                "Hakkında", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK,
-                MessageBoxOptions.RightAlign);
+            About();
         }
 
         private Version getRunningVersion()
@@ -1051,6 +1124,19 @@ namespace Panaroma.Communication.Application
             {
                 VisibilityDefaultStatus();
                 return;
+            }
+        }
+
+        private void Main_StateChanged(object sender, EventArgs e)
+        {
+            switch(WindowState)
+            {
+                case WindowState.Minimized:
+                    {
+                        notifyIcon.Visible = true;
+                        ShowInTaskbar = false;
+                        break;
+                    }
             }
         }
     }

@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Closing="Main_Closing" x:Name="Main" Height="329.238"
-        Width="519.069" Icon="images/websocket.png">
+        Width="519.069" Icon="images/websocket.png" StateChanged="Main_StateChanged">
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="242*" />
