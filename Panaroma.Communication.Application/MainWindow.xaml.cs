@@ -25,6 +25,7 @@ namespace Panaroma.Communication.Application
         private System.Windows.Forms.NotifyIcon notifyIcon = new System.Windows.Forms.NotifyIcon();
         private System.Windows.Forms.ContextMenu notifyIconContexMenu = new System.Windows.Forms.ContextMenu();
         private System.Windows.Forms.MenuItem menuItem = new System.Windows.Forms.MenuItem();
+        WindowClipboardMonitor clipboardMonitor = null;
 
         private WebSocketServer _panaromaWebSocketServer;
         private bool _isSuccessMouseDown;
@@ -61,7 +62,6 @@ namespace Panaroma.Communication.Application
 
             else if(ConfigurationManager.AppSettings["ProcessType"] == "2")
             {
-                Clipboard.Clear();
                 Title = "                                                   MX-915 İletişim Ekranı" + " - " + "ClipBoard";
                 InitializeComponent();
                 MainWindowProperty();
@@ -186,59 +186,61 @@ namespace Panaroma.Communication.Application
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-
-            var windowClipboardManager = new ClipboardManager(this);
-            windowClipboardManager.ClipboardChanged += ClipboardChanged;
+            clipboardMonitor = new WindowClipboardMonitor(this);
+            clipboardMonitor.ClipboardTextChanged += ClipboardTextChanged;
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            clipboardMonitor.ClipboardTextChanged -= ClipboardTextChanged;
+            clipboardMonitor.Dispose();
         }
 
-        private async void ClipboardChanged(object sender, EventArgs e)
+        private async void ClipboardTextChanged(object sender, string text)
         {
             try
             {
-                if(Clipboard.ContainsText())
+                var t = text.Trim();
+                if(string.IsNullOrEmpty(t)) return;
+                bool request = t.StartsWith("#okccmd#");
+                bool response = t.StartsWith("#okcres#");
+                if(!response == false) return;
+                if(request == true)
                 {
-                    var t = await _asyncClipboardService.GetTextAsync();
-                    if(string.IsNullOrEmpty(t)) return;
-                    bool request = t.StartsWith("#okccmd#");
-                    bool response = t.StartsWith("#okcres#");
-                    if(!response == false) return;
-                    if(request == true)
+                    if(String.IsNullOrWhiteSpace(t))
+                        return;
+                    if(t == okccmd)
                     {
-                        if(String.IsNullOrWhiteSpace(t))
-                            return;
-                        if(t == okccmd)
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
-                        if(t.IndexOf(okccmd) == -1)
-                        {
-                            return;
-                        }
+                    if(t.IndexOf(okccmd) == -1)
+                    {
+                        return;
+                    }
 
-                        t = t.Substring(okccmd.Length);
-                        try
-                        {
+                    t = t.Substring(okccmd.Length);
+                    try
+                    {
 
-                            (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
-                            string str =
-                                PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
-                                    .GetInternalCommunication());
-                            await _asyncClipboardService.SetTextAsync(okcres + str);
-                            if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
-                            {
-                                AddLogToGrid(str);
-                            }
-                        }
-                        catch(Exception exception)
+                        (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
+                        string str =
+                            PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
+                                .GetInternalCommunication());
+                        await _asyncClipboardService.SetTextAsync(okcres + str);
+                        if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
                         {
-                            _catch(exception);
+                            AddLogToGrid(str);
                         }
-                        finally
-                        {
-                            _finally();
+                    }
+                    catch(Exception exception)
+                    {
+                        _catch(exception);
+                    }
+                    finally
+                    {
+                        _finally();
 
-                        }
                     }
                 }
             }
@@ -349,7 +351,6 @@ namespace Panaroma.Communication.Application
         private void Main_Closing(object sender, CancelEventArgs e)
         {
             VisibilityDefaultStatus();
-            //Logger.Info("Program kapatılmaya Çalışıldı");
             if(!_pleaseClose)
             {
                 Dispatcher.BeginInvoke(
