@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AsyncWindowsClipboard;
+using Newtonsoft.Json;
 using Panaroma.OKC.Integration.Library;
 using System;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ namespace Panaroma.Communication.Application
 {
     public partial class MainWindow : Window, IComponentConnector
     {
+        private readonly IAsyncClipboardService _asyncClipboardService = new WindowsClipboardService(timeout: TimeSpan.FromMilliseconds(100));
         private System.Windows.Forms.NotifyIcon notifyIcon = new System.Windows.Forms.NotifyIcon();
         private System.Windows.Forms.ContextMenu notifyIconContexMenu = new System.Windows.Forms.ContextMenu();
         private System.Windows.Forms.MenuItem menuItem = new System.Windows.Forms.MenuItem();
@@ -71,7 +73,6 @@ namespace Panaroma.Communication.Application
 
                 notifyIcon.Icon = new System.Drawing.Icon("Html.ico");
                 notifyIcon.Visible = false;
-                notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(notifyIcon_Click);
                 notifyIcon.DoubleClick += new System.EventHandler(notifyIcon1_DoubleClick);
                 notifyIconContexMenu.MenuItems.Add("Uygulamayı Aç", new EventHandler(Open));
                 notifyIconContexMenu.MenuItems.Add("Uygulamayı Kapat", new EventHandler(Close));
@@ -182,15 +183,6 @@ namespace Panaroma.Communication.Application
             _pleaseClose = true;
             Close();
         }
-
-        private void notifyIcon_Click(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if(e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
-                notifyIcon.ShowBalloonTip(1000, "Uygulama Bildirimi !!!", "Uygulama Buradan Çalıştırılamaz...", System.Windows.Forms.ToolTipIcon.Warning);
-            }
-        }
-
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
@@ -199,61 +191,60 @@ namespace Panaroma.Communication.Application
             windowClipboardManager.ClipboardChanged += ClipboardChanged;
         }
 
-        private void ClipboardChanged(object sender, EventArgs e)
+        private async void ClipboardChanged(object sender, EventArgs e)
         {
             try
             {
                 if(Clipboard.ContainsText())
                 {
-                    string t = Clipboard.GetText();
+                    var t = await _asyncClipboardService.GetTextAsync();
+                    if(string.IsNullOrEmpty(t)) return;
                     bool request = t.StartsWith("#okccmd#");
                     bool response = t.StartsWith("#okcres#");
-                    if(!response == true)
+                    if(!response == false) return;
+                    if(request == true)
                     {
-                        if(request == true)
+                        if(String.IsNullOrWhiteSpace(t))
+                            return;
+                        if(t == okccmd)
                         {
-                            if(String.IsNullOrWhiteSpace(t))
-                                return;
-                            if(t == okccmd)
-                            {
-                                return;
-                            }
+                            return;
+                        }
 
-                            if(t.IndexOf(okccmd) == -1)
-                            {
-                                return;
-                            }
+                        if(t.IndexOf(okccmd) == -1)
+                        {
+                            return;
+                        }
 
-                            t = t.Substring(okccmd.Length);
-                            try
-                            {
+                        t = t.Substring(okccmd.Length);
+                        try
+                        {
 
-                                (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
-                                string str =
-                                    PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
-                                        .GetInternalCommunication());
-                                Clipboard.SetText(okcres + str);
-                                if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
-                                {
-                                    AddLogToGrid(str);
-                                }
-                            }
-                            catch(Exception exception)
+                            (new ProcessWorker(JsonConvert.DeserializeObject<TcpCommand>(t))).DoWork();
+                            string str =
+                                PublicCommunication.ConvertFromInternalCommunication(InternalCommunication
+                                    .GetInternalCommunication());
+                            await _asyncClipboardService.SetTextAsync(okcres + str);
+                            if(InternalCommunication.GetInternalCommunication().NotificationWindowses.Any())
                             {
-                                _catch(exception);
+                                AddLogToGrid(str);
                             }
-                            finally
-                            {
-                                _finally();
+                        }
+                        catch(Exception exception)
+                        {
+                            _catch(exception);
+                        }
+                        finally
+                        {
+                            _finally();
 
-                            }
                         }
                     }
                 }
             }
             catch(Exception ex)
             {
-                Dispatcher.BeginInvoke(
+                await Dispatcher.BeginInvoke(
                 new Action(() => (new NotificationWindow(NotificationType.Error, "Hata ",
                 ex.Data.ToString(), Helpers.DateTimeHelper.GetDateTime()))
                 .Build().Show()), Array.Empty<object>());

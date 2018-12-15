@@ -161,6 +161,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AsyncWindowsClipboard\AsyncWindowsClipboard.csproj">
+      <Project>{77832f5b-a69d-4036-af34-6a7c13fefe24}</Project>
+      <Name>AsyncWindowsClipboard</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Panaroma.OKC.Integration.Library\Panaroma.OKC.Integration.Library.csproj">
       <Project>{b59b6604-e330-4ab7-9176-630fa2b0674e}</Project>
       <Name>Panaroma.OKC.Integration.Library</Name>
