@@ -157,17 +157,17 @@ namespace Panaroma.Communication.Application
 
         public void About()
         {
-            MessageBox.Show(
-    "Bu Program Panaroma Bilişim için geliştirilmiştir.\nTüm Hakları Saklıdır." + "\n http://www.pbt.com.tr/"
+            MessageBox.Show("Bu Program Panaroma Bilişim için geliştirilmiştir.\nTüm Hakları Saklıdır." + "\n http://www.pbt.com.tr/"
                                                                                 + "\n" + "Version: " +
                                                                                 getRunningVersion().Major +
                                                                                 "." + getRunningVersion()
                                                                                     .MajorRevision + "." +
                                                                                 getRunningVersion().Build +
                                                                                 "." +
-                                                                                " Release_181211-2324",
-    "Hakkında", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK,
-    MessageBoxOptions.RightAlign);
+                                                                                " Release_181216-1500",
+                                                                                "Hakkında", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK,
+                                                                                 MessageBoxOptions.RightAlign
+                                                                                 );
         }
 
         private void About(object sender, EventArgs e)
@@ -257,7 +257,7 @@ namespace Panaroma.Communication.Application
         {
             ShowInTaskbar = true;
             lblVersionInfo.Content = "Version: " + getRunningVersion().Major + "." + getRunningVersion().MajorRevision +
-                                     "." + getRunningVersion().Build + "." + " Release_181211-2324";
+                                     "." + getRunningVersion().Build + "." + " Release_181216-1500";
             ResizeMode = ResizeMode.CanMinimize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ToolTip = "Bu Program WebSocket teknolojisi veya ClipBoard ile haberleşme yapar. Yalnızca Json Formatı ile habeleşme kurar.";
