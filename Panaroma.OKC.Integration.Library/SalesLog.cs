@@ -65,8 +65,8 @@ namespace Panaroma.OKC.Integration.Library
                     return;
                 }
             }
-            lock(sw)
-            {
+            //lock(sw)
+            //{
                 now = DateTime.Now;
                 if(now.DayOfYear != lastLogTime.DayOfYear)
                 {
@@ -77,7 +77,7 @@ namespace Panaroma.OKC.Integration.Library
                 sw.WriteLine(format, args);
                 sw.Flush();
                 lastLogTime = now;
-            }
+            //}
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace Panaroma.OKC.Integration.Library
 {
+    [Serializable()]
     internal class COMPortConnectionException : Exception
     {
         public COMPortConnectionException(string message)

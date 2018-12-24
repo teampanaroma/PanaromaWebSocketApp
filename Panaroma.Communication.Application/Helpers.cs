@@ -70,7 +70,7 @@ namespace Panaroma.Communication.Application
         {
             private static string _fileName;
 
-            [DllImport("winspool.Drv", EntryPoint = "OpenPrinterA", CharSet = CharSet.Ansi,
+            [DllImport("winspool.Drv", EntryPoint = "OpenPrinterA", CharSet = CharSet.Unicode,
                 CallingConvention = CallingConvention.StdCall, SetLastError = true)]
             private static extern bool OpenPrinter([MarshalAs(UnmanagedType.LPStr)] string szPrinter,
                 out IntPtr hPrinter, IntPtr pd);
@@ -219,7 +219,7 @@ namespace Panaroma.Communication.Application
                     }).ToList();
             }
 
-            [DllImport("winspool.drv", CharSet = CharSet.Auto, SetLastError = true)]
+            [DllImport("winspool.drv", CharSet = CharSet.Unicode, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool SetDefaultPrinter(string name);
 

@@ -7,76 +7,13 @@ using System.Windows.Interop;
 
 namespace Panaroma.Communication.Application
 {
-    public class ClipboardManager:IDisposable
-    {
-        public event EventHandler ClipboardChanged;
-        private bool disposed = false;
-
-        public ClipboardManager(Window windowSource)
-        {
-            HwndSource source = PresentationSource.FromVisual(windowSource) as HwndSource;
-            if(source == null)
-            {
-                throw new ArgumentException(
-                    "Pencere kaynağı, Windows'un OnSourceInitialized işleyicisindeki gibi ilk önce başlatılmalıdır."
-                    , nameof(windowSource));
-            }
-
-            source.AddHook(WndProc);
-
-            // get window handle for interop
-            IntPtr windowHandle = new WindowInteropHelper(windowSource).Handle;
-
-            // register for clipboard events
-            NativeMethods.AddClipboardFormatListener(windowHandle);
-        }
-
-        private void OnClipboardChanged()
-        {
-            ClipboardChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        private static readonly IntPtr WndProcSuccess = IntPtr.Zero;
-
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            if(msg == NativeMethods.WM_CLIPBOARDUPDATE)
-            {
-                OnClipboardChanged();
-                handled = true;
-            }
-
-            return WndProcSuccess;
-        }
-        public void Dispose()
-        {
-            ReleaseResources();
-            GC.SuppressFinalize(this);
-        }
-        protected virtual void ReleaseResources()
-        {
-            if(disposed)
-            {
-                return;
-            }
-            else
-            {
-                disposed = true;
-            }
-        }
-        ~ClipboardManager()
-        {
-            ReleaseResources();
-        }
-    }
     public class WindowClipboardMonitor : IDisposable
     {
         private readonly IAsyncClipboardService _asyncClipboardService = new WindowsClipboardService(timeout: TimeSpan.FromMilliseconds(100));
         public event EventHandler<string> ClipboardTextChanged;
-
+        private bool disposed = false;
         HwndSource Win32InteropSource;
         IntPtr WindowInteropHandle;
-        private bool disposed = false;
 
         public WindowClipboardMonitor(Window clipboardWindow)
         {

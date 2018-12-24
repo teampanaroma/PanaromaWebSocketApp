@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace Panaroma.OKC.Integration.Library
 {
+    [Serializable()]
     public class EthernetConnectionException : Exception
     {
         public EthernetConnectionException(string message)

@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace Panaroma.OKC.Integration.Library
 {
+    [Serializable()]
     public class PCPOSOKCException : Exception
     {
         public PCPOSOKCException(string message)

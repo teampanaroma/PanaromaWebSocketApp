@@ -80,7 +80,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ClipboardManager.cs" />
-    <Compile Include="DataHelper.cs" />
     <Compile Include="FileWorker.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="InternalCommunication.cs" />
@@ -100,8 +99,6 @@
     <Compile Include="ProcessWorker.cs" />
     <Compile Include="PublicCommunication.cs" />
     <Compile Include="TcpCommand.cs" />
-    <Compile Include="Win32ClipboardAPI.cs" />
-    <Compile Include="Win32MemoryAPI.cs" />
     <Compile Include="Worker.cs" />
     <Compile Include="WorkerExceptionHandle.cs" />
     <Compile Include="App.xaml.cs">
@@ -187,13 +184,6 @@
     <Resource Include="images\Capture.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Fody.3.3.2\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.2\build\Fody.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.3.3.2\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.2\build\Fody.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

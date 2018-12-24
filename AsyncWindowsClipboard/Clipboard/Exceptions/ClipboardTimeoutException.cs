@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace AsyncWindowsClipboard.Exceptions
 {
+    [Serializable]
     /// <summary>
     ///     This type of exception is thrown if the operation fails until timeout is reached. It's depended on a single or
     ///     multiple <see cref="ClipboardWindowsApiException" />s.
     /// </summary>
     /// <seealso cref="ClipboardWindowsApiException"/>
-    public sealed class ClipboardTimeoutException : Exception
+    public sealed class ClipboardTimeoutException : Exception,ISerializable
     {
         public ClipboardTimeoutException(string message, ClipboardWindowsApiException innerException) : base
         (
